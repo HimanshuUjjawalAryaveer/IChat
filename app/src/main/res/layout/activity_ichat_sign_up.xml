@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/sigiup_bg"
+    tools:context=".login.IChatSignUpActivity"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        tools:ignore="UselessParent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@drawable/sign_back_bg"
+            android:orientation="vertical"
+            android:layout_margin="16dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="25dp"
+            android:paddingStart="25dp"
+            android:paddingEnd="25dp">
+
+            <!-- Welcome text -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/welcome_to_ichat"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:textColor="@color/white"
+                android:layout_marginTop="20dp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/create_your_account"
+                android:textSize="16sp"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/white"
+                android:layout_gravity="center"/>
+
+            <!-- Profile Image -->
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:padding="5dp"
+                android:src="@drawable/user3"
+                app:civ_border_color="@color/white"
+                app:civ_border_width="3dp"
+                android:layout_marginTop="25dp"
+                android:id="@+id/profileImage"/>
+
+            <!-- Username Input -->
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="14"
+                android:inputType="text"
+                android:hint="@string/username"
+                android:padding="15dp"
+                android:background="@drawable/edit_bg"
+                android:layout_marginTop="20dp"
+                android:drawableStart="@drawable/username"
+                android:drawablePadding="10dp"
+                android:id="@+id/userName"
+                android:autofillHints="" />
+
+            <!-- Email Input -->
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="14"
+                android:inputType="textEmailAddress"
+                android:hint="@string/email"
+                android:padding="15dp"
+                android:background="@drawable/edit_bg"
+                android:layout_marginTop="15dp"
+                android:drawableStart="@drawable/mail"
+                android:drawablePadding="10dp"
+                android:id="@+id/email"
+                android:autofillHints="" />
+
+            <!-- Password Input -->
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="14"
+                android:inputType="textWebPassword"
+                android:hint="@string/password"
+                android:padding="15dp"
+                android:background="@drawable/edit_bg"
+                android:layout_marginTop="15dp"
+                android:drawableStart="@drawable/pass"
+                android:drawablePadding="10dp"
+                android:id="@+id/password"
+                android:drawableEnd="@drawable/close_eye"
+                android:autofillHints="" />
+
+            <!-- Confirm Password Input -->
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="14"
+                android:inputType="textWebPassword"
+                android:hint="@string/confirm_password"
+                android:padding="15dp"
+                android:background="@drawable/edit_bg"
+                android:layout_marginTop="15dp"
+                android:drawableStart="@drawable/confirm"
+                android:drawablePadding="10dp"
+                android:id="@+id/confirmPassword"
+                android:drawableEnd="@drawable/close_eye"
+                android:autofillHints="" />
+
+            <!-- Already have an account? -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/already_have_an_account"
+                android:textColor="@color/white"
+                android:textAlignment="viewEnd"
+                android:layout_marginTop="10dp"
+                android:id="@+id/haveAccount"
+                android:layout_gravity="end"/>
+
+            <!-- Sign Up Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_up"
+                android:textColor="@color/light_blue"
+                android:background="@drawable/btn_back_bg"
+                android:layout_marginTop="30dp"
+                android:id="@+id/signUpButton"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

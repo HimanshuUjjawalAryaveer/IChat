@@ -1,0 +1,27 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+<!--    style for the progress dialog-->
+    <style name="customColorOfProgressDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:background">@color/white</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+<!--    style for the toolbar-->
+    <style name="IChatCustomToolbar" parent="Theme.AppCompat.DayNight" >
+        <item name="colorPrimary">@color/light_blue</item>
+        <item name="colorPrimaryDark">@color/light_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
+<!--    style for the message chat-->
+    <style name="IChatCustomToolbarForMessageChat" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="colorPrimary">@color/light_blue</item>
+        <item name="colorPrimaryDark">@color/light_blue</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+<!--    style for the tabLayout text-->
+    <style name="TabTextStyle" parent="TextAppearance.Design.Tab">
+        <item name="android:textStyle">bold</item>
+    </style>
+</resources>

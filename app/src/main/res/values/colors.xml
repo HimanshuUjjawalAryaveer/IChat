@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="transparent_white">#25FFFFFF</color>
+    <color name="transparent_black">#40000000</color>
+    <color name="light_blue">#4a8efa</color>
+    <color name="dark_blue">#0f70e6</color>
+    <color name="light_light_blue">#9089c0ff</color>
+    <color name="light_white">#EFEFEF</color>
+    <color name="msg_send_box">#CFCFCF</color>
+    <color name="user_block_des">#959696</color>
+    <color name="double_tick">#00dec3</color>
+</resources>

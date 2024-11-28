@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1012085262583",
+    "project_id": "hua-project123",
+    "storage_bucket": "hua-project123.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012085262583:android:b67af93eb54d2bfdc7ebf2",
+        "android_client_info": {
+          "package_name": "com.example.ichat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3eeeqwCzn5h1VR3_hMbGi3Yyfe-Fy1f0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
