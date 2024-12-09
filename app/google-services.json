@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "1012085262583",
+    "firebase_url": "https://hua-project123-default-rtdb.firebaseio.com",
     "project_id": "hua-project123",
     "storage_bucket": "hua-project123.appspot.com"
   },
@@ -12,7 +13,16 @@
           "package_name": "com.example.ichat"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1012085262583-i89s9ov0in58dd42tdbol17soeq0pg15.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ichat",
+            "certificate_hash": "51373137e11f1da864584962f11e910c099fe6f1"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyA3eeeqwCzn5h1VR3_hMbGi3Yyfe-Fy1f0"
@@ -20,7 +30,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012085262583-htioavchpc4sm5bcnhj1is0iki6n7cug.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

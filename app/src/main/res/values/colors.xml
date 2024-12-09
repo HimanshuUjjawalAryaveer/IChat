@@ -11,4 +11,6 @@
     <color name="msg_send_box">#CFCFCF</color>
     <color name="user_block_des">#959696</color>
     <color name="double_tick">#00dec3</color>
+    <color name="white1">#ccDADADA</color>
+    <color name="blue">#0f70e6</color>
 </resources>

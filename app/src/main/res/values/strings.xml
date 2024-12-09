@@ -44,4 +44,11 @@
     <string name="search_users">search users</string>
     <string name="call">call</string>
     <string name="video">video</string>
+    <string name="ichat">IChat</string>
+    <string name="welcome_to_ichat_ichat_is_the_social_chatting_application_that_is_used_to_chatting_with_each_other">Welcome to IChat, IChat is the social chatting application that is used to chatting with each other.</string>
+    <string name="create_account_1">Create Account</string>
+    <string name="name">Name</string>
+    <string name="please_signup_to_continue">please signup to continue...</string>
+    <string name="sign_up_with_google">Sign up with Google</string>
+    <string name="default_web_client_id">1012085262583-htioavchpc4sm5bcnhj1is0iki6n7cug.apps.googleusercontent.com</string>
 </resources>
