@@ -6,6 +6,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.ichat.Home.HomeActivity;
 import com.example.ichat.R;
+import com.example.ichat.login.CreateAccountActivity;
 import com.example.ichat.login.IChatLoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,7 +27,7 @@ public class IChatSplash extends AppCompatActivity {
         if(firebaseUser != null) {
             intent = new Intent(IChatSplash.this, HomeActivity.class);
         } else {
-            intent = new Intent(IChatSplash.this, IChatLoginActivity.class);
+            intent = new Intent(IChatSplash.this, CreateAccountActivity.class);
         }
         new Handler().postDelayed(new Runnable() {
             @Override

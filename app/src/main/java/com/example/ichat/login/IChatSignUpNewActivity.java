@@ -1,11 +1,13 @@
 package com.example.ichat.login;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
+import android.text.InputType;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -53,12 +55,14 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase database;
     private static final int RC_CODE = 11;
-    private ProgressDialog pd;
     private EditText username, userEmail, userPassword;
     private CircleImageView userProfileImage;
     private Uri imageUri;
     private FirebaseStorage storage;
+    private ProgressDialog pd;
+    private boolean isPasswordVisible;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +79,9 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
 
         init();
 
-        // code for the google signin button..
+        userPassword.setOnTouchListener((v, event) -> showAndHidePassword(event, userPassword));
+
+        // code for the google sign-in button..
 
         findViewById(R.id.google_signin_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +100,7 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
                 String email = userEmail.getText().toString().trim();
                 String password = userPassword.getText().toString().trim();
                 if(name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(IChatSignUpNewActivity.this, "fill all the details", Toast.LENGTH_LONG).show();
+                    Toast.makeText(IChatSignUpNewActivity.this, getString(R.string.fill_detail), Toast.LENGTH_LONG).show();
                 } else {
                     // sign up with email and password;
                     createUserUsingEmailAndPassword(name, email, password);
@@ -116,6 +122,8 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
         userEmail = findViewById(R.id.user_email);
         userPassword = findViewById(R.id.user_password);
         userProfileImage = findViewById(R.id.user_profile_image);
+
+        isPasswordVisible = false;
 
         mAuth = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
@@ -149,17 +157,15 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
             pd.setTitle("Logging In...");
             pd.setMessage("Please wait...");
             pd.show();
-//            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-//            GoogleSignInAccount account = task.getResult();
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 authenticationWithGoogle(account.getIdToken());
                 // Successfully signed in
             } catch (ApiException e) {
-                Log.e("SignInError", "Sign-in failed with code: " + e.getLocalizedMessage());
+                Toast.makeText(IChatSignUpNewActivity.this, getString(R.string.google_sign_failed), Toast.LENGTH_LONG).show();
+                pd.dismiss();
             }
-//            authenticationWithGoogle(account.getIdToken());
         }
     }
 
@@ -174,19 +180,9 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
                             FirebaseUser fUser = mAuth.getCurrentUser();
                             assert fUser != null;
                             uploadDataToTheRealtimeDatabase(fUser.getDisplayName(), fUser.getEmail(), "Known by Google", String.valueOf(fUser.getPhotoUrl()), fUser.getUid());
-//                            User user = new User(fUser.getDisplayName(), fUser.getEmail(),"Known by Google", fUser.getUid(), Objects.requireNonNull(fUser.getPhotoUrl()).toString(), 500, "Unknown");
-//                            database.getReference("User").child(fUser.getUid()).setValue(user)
-//                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<Void> task) {
-//                                            pd.dismiss();
-//                                            startActivity(new Intent(IChatSignUpNewActivity.this, HomeActivity.class));
-//                                            finishAffinity();
-//                                        }
-//                                    });
-
                         } else {
-                            Toast.makeText(IChatSignUpNewActivity.this, "Sign in failed", Toast.LENGTH_LONG).show();
+                            Toast.makeText(IChatSignUpNewActivity.this, getString(R.string.google_sign_failed), Toast.LENGTH_LONG).show();
+                            pd.dismiss();
                         }
                     }
                 });
@@ -203,6 +199,10 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
     }
 
     private void createProfileUsingEmailAndPassword(String name, String email, String password, String imageUrl) {
+        pd = new ProgressDialog(IChatSignUpNewActivity.this);
+        pd.setTitle("Logging In...");
+        pd.setMessage("Please wait...");
+        pd.show();
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -216,6 +216,7 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(IChatSignUpNewActivity.this, "sign up failed...", Toast.LENGTH_LONG).show();
+                        pd.dismiss();
                     }
                 });
     }
@@ -224,18 +225,24 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
 
     private void uploadDataToTheRealtimeDatabase(String name, String email, String password, String imageUrl, String uid) {
         User user = new User(name, email, password, uid, imageUrl, "Your Address", "Hey there, I am using IChat.", "graduation", "offline");
-        database.getReference("User").child(uid).setValue(user)
+        database.getReference(getString(R.string.User)).child(uid).setValue(user)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
                             Toast.makeText(IChatSignUpNewActivity.this, "data uploaded", Toast.LENGTH_LONG).show();
+                            pd.dismiss();
+
+                            // redirect to the home activity...
+                            startActivity(new Intent(IChatSignUpNewActivity.this, HomeActivity.class));
+                            finishAffinity();
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Toast.makeText(IChatSignUpNewActivity.this, "failed to upload data", Toast.LENGTH_LONG).show();
+                        pd.dismiss();
                     }
                 });
     }
@@ -291,5 +298,29 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
                         pd.setMessage("Progress: " + (int) percent + "%");
                     }
                 });
+    }
+
+
+    // use to handle the view and un-view options to the edittext view...
+    private boolean showAndHidePassword(@NonNull MotionEvent event, EditText editText) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (event.getRawX() >= (editText.getRight() - editText.getCompoundDrawables()[2].getBounds().width())) {
+                isPasswordVisible = !isPasswordVisible;
+
+                if (isPasswordVisible) {
+                    // Show password
+                    editText.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                    editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.open_eye, 0);
+                } else {
+                    // Hide password
+                    editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    editText.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.close_eye, 0);
+                }
+                editText.setSelection(editText.getText().length());
+
+                return true;
+            }
+        }
+        return false;
     }
 }

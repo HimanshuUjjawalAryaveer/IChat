@@ -36,16 +36,14 @@ public class CreateAccountActivity extends AppCompatActivity {
         createAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(CreateAccountActivity.this, IChatSignUpActivity.class));
-                finish();
+                startActivity(new Intent(CreateAccountActivity.this, IChatSignUpNewActivity.class));
             }
         });
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(CreateAccountActivity.this, IChatLoginActivity.class));
-                finish();
+                startActivity(new Intent(CreateAccountActivity.this, IChatSignInNewActivity.class));
             }
         });
     }
