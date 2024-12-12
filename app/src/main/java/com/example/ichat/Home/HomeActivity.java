@@ -56,7 +56,7 @@ public class HomeActivity extends AppCompatActivity {
         if(itemID == R.id.logout) {
             firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
             if(firebaseUser != null) {
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+                DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(firebaseUser.getUid());
                 Map<String, Object> updateChild = new HashMap<>();
                 updateChild.put("status", "offline");
                 reference.updateChildren(updateChild)
@@ -107,7 +107,7 @@ public class HomeActivity extends AppCompatActivity {
     private void setStatus(String status) {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         if(firebaseUser != null) {
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(firebaseUser.getUid());
             Map<String, Object> updateChild = new HashMap<>();
             updateChild.put("status", status);
             reference.updateChildren(updateChild);

@@ -1,8 +1,10 @@
 package com.example.ichat.Home;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,14 +13,16 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,8 +30,8 @@ import com.bumptech.glide.Glide;
 import com.example.ichat.Adapter.MessageAdapter;
 import com.example.ichat.Home.Profile.ProfileActivity;
 import com.example.ichat.Model.Chats;
+import com.example.ichat.Model.User;
 import com.example.ichat.R;
-import com.example.ichat.Model.Users;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -46,8 +50,6 @@ import java.util.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatMessageActivity extends AppCompatActivity {
-    private static final String CHANNEL_ID = "HUA";
-    private static final int NOTIFICATION_ID = 10;
 
     private Toolbar toolbar;
     private CircleImageView image;
@@ -56,12 +58,14 @@ public class ChatMessageActivity extends AppCompatActivity {
     private ImageButton messageSendBtn;
     private RecyclerView recyclerView;
     private String uID;
-    private Intent intent;
     private FirebaseUser user;
     private DatabaseReference reference;
     private MessageAdapter messageAdapter;
     private ArrayList<Chats> chats;
     private ValueEventListener valueEventListener;
+    private final String[] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+    private static final int REQUEST_CODE = 3;
+    private LinearLayout call;
 
 
     @Override
@@ -75,6 +79,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener((View v) -> finish());
         setRecyclerView(getApplicationContext());
         loadData();
+        checkVideoCall();
         messageSendBtn.setOnClickListener((View v) -> {
                 String chatMessage = message.getText().toString();
                 if(!chatMessage.isEmpty()) {
@@ -83,6 +88,28 @@ public class ChatMessageActivity extends AppCompatActivity {
                 message.setText("");
             });
     }
+
+    private void checkVideoCall() {
+        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user1 = snapshot.getValue(User.class);
+                assert user1 != null;
+                if(user1.isVideoCallStatus()) {
+                    call.setVisibility(View.VISIBLE);
+                } else {
+                    call.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private String[] setTime() {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat timeFormatter = new SimpleDateFormat("hh:mm a");
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yy");
@@ -90,21 +117,21 @@ public class ChatMessageActivity extends AppCompatActivity {
         return new String[]{timeFormatter.format(date), dateFormatter.format(date)};
     }
     private void loadData() {
-        intent = getIntent();
+        Intent intent = getIntent();
         uID = intent.getStringExtra("userId");
         user = FirebaseAuth.getInstance().getCurrentUser();
-        if(uID !=null) {
-            reference = FirebaseDatabase.getInstance().getReference("Users").child(uID);
+        if(uID != null) {
+            reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(uID);
             reference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Users users = snapshot.getValue(Users.class);
-                    assert users != null;
-                    username.setText(getCapitalText(users.getUserName()));
-                    status.setText(users.getStatus());
-                    if (users.getImage() != null) {
+                    User user1 = snapshot.getValue(User.class);
+                    assert user1 != null;
+                    username.setText(getCapitalText(user1.getUsername()));
+                    status.setText(user1.getStatus());
+                    if (user1.getImageUrl() != null) {
                         if(!ChatMessageActivity.this.isDestroyed() && ! ChatMessageActivity.this.isFinishing()) {
-                            Glide.with(ChatMessageActivity.this).load(users.getImage()).into(image);
+                            Glide.with(ChatMessageActivity.this).load(user1.getImageUrl()).into(image);
                         }
                     }
                     readMessage(user.getUid(), uID);
@@ -136,6 +163,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         message = findViewById(R.id.message);
         messageSendBtn = findViewById(R.id.message_send_btn);
         recyclerView = findViewById(R.id.recycler_view);
+        call = findViewById(R.id.call);
     }
     private void setRecyclerView(Context context) {
         recyclerView.setHasFixedSize(true);
@@ -145,7 +173,9 @@ public class ChatMessageActivity extends AppCompatActivity {
     }
     private void sendMessage(String sender, String receiver, String message, String time, String date) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference userReference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(receiver);
         HashMap<String, Object> userChat = new HashMap<>();
+        HashMap<String, Object> userLastChatTime = new HashMap<>();
         userChat.put("sender", sender);
         userChat.put("receiver", receiver);
         userChat.put("message", message);
@@ -154,6 +184,8 @@ public class ChatMessageActivity extends AppCompatActivity {
         userChat.put("date", date);
         userChat.put("timestamp", System.currentTimeMillis());
         reference.child("Chats").push().setValue(userChat);
+        userLastChatTime.put("timestamp", System.currentTimeMillis());
+        userReference.updateChildren(userLastChatTime);
     }
     private void setToolbar() {
         setSupportActionBar(toolbar);
@@ -207,26 +239,20 @@ public class ChatMessageActivity extends AppCompatActivity {
                 intent1.putExtra("userID", uID);
                 startActivity(intent1);
             }
+        } else {
+            if(isPermissionGranted()) {
+                Toast.makeText(ChatMessageActivity.this, "set status", Toast.LENGTH_LONG).show();
+                setVideoCallStatus();   //  set status for video call...
+            } else {
+                askPermission();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    //  correct this code...
-
-//    @Override
-//    public boolean onPrepareOptionsMenu(Menu menu) {
-//        MenuItem voiceItem = menu.findItem(R.id.voice_call);
-//        ZegoSendCallInvitationButton zegoSendCallInvitationButton = new ZegoSendCallInvitationButton(this);
-//        zegoSendCallInvitationButton.setIsVideoCall(false);
-//        zegoSendCallInvitationButton.setResourceID("zego_uikit_call");
-//        zegoSendCallInvitationButton.setTint
-//        zegoSendCallInvitationButton.setInvitees(Collections.singletonList(new ZegoUIKitUser(uID)));
-//        voiceItem.setActionView(zegoSendCallInvitationButton);
-//        return super.onPrepareOptionsMenu(menu);
-//    }
 
     private void setStatus(String status) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(user.getUid());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(user.getUid());
         Map<String, Object> updateChild = new HashMap<>();
         updateChild.put("status", status);
         reference.updateChildren(updateChild);
@@ -269,5 +295,25 @@ public class ChatMessageActivity extends AppCompatActivity {
             reference.removeEventListener(valueEventListener);
         }
         setStatus("offline");
+    }
+
+    private boolean isPermissionGranted() {
+        for(String permission : permissions) {
+            if(ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED)
+                return false;
+        }
+        return true;
+    }
+    private void askPermission() {
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
+    }
+
+    private void setVideoCallStatus() {
+        if(uID != null) {
+            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(uID);
+            Map<String, Object> setVideoCallStatus = new HashMap<>();
+            setVideoCallStatus.put("videoCallStatus", true);
+            reference1.updateChildren(setVideoCallStatus);
+        }
     }
 }

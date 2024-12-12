@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.example.ichat.Adapter.UserAdapter;
+import com.example.ichat.Model.User;
 import com.example.ichat.R;
 import com.example.ichat.Model.Users;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +36,7 @@ public class UsersFragment extends Fragment {
     private RecyclerView recyclerView;
     private EditText editText;
     private UserAdapter userAdapter;
-    private ArrayList<Users> list;
+    private ArrayList<User> list;
     ProgressDialog pd;
     private boolean flag = true;
 
@@ -70,18 +71,18 @@ public class UsersFragment extends Fragment {
     }
 
     private void searchUser(String s) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        Query query = FirebaseDatabase.getInstance().getReference("Users").orderByChild("userName").startAt(s).endAt(s+"\uf8ff");
+        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+        Query query = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).orderByChild("username").startAt(s).endAt(s+"\uf8ff");
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 list.clear();
                 for(DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Users users = dataSnapshot.getValue(Users.class);
-                    assert users != null;
+                    User user = dataSnapshot.getValue(User.class);
                     assert user != null;
-                    if(!users.getId().equals(user.getUid())) {
-                        list.add(users);
+                    assert fUser != null;
+                    if(!user.getUserID().equals(fUser.getUid())) {
+                        list.add(user);
                     }
                 }
                 userAdapter = new UserAdapter(getContext(), list, false);
@@ -113,7 +114,7 @@ public class UsersFragment extends Fragment {
     }
     private void readUsers() {
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(getString(R.string.user));
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -121,11 +122,11 @@ public class UsersFragment extends Fragment {
                 if (editText.getText().toString().isEmpty()) {
                     list.clear();
                     for (DataSnapshot snapshot1 : snapshot.getChildren()) {
-                        Users users = snapshot1.getValue(Users.class);
+                        User user = snapshot1.getValue(User.class);
                         assert firebaseUser != null;
-                        assert users != null;
-                        if (!firebaseUser.getUid().equals(users.getId())) {
-                            list.add(users);
+                        assert user != null;
+                        if (!firebaseUser.getUid().equals(user.getUserID())) {
+                            list.add(user);
                         }
                     }
                     pd.dismiss();
@@ -136,7 +137,7 @@ public class UsersFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                pd.dismiss();
             }
         });
     }

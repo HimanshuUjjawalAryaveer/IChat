@@ -179,7 +179,7 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
                         if(task.isSuccessful()) {
                             FirebaseUser fUser = mAuth.getCurrentUser();
                             assert fUser != null;
-                            uploadDataToTheRealtimeDatabase(fUser.getDisplayName(), fUser.getEmail(), "Known by Google", String.valueOf(fUser.getPhotoUrl()), fUser.getUid());
+                            uploadDataToTheRealtimeDatabase(Objects.requireNonNull(fUser.getDisplayName()).toLowerCase(), fUser.getEmail(), "Known by Google", String.valueOf(fUser.getPhotoUrl()), fUser.getUid());
                         } else {
                             Toast.makeText(IChatSignUpNewActivity.this, getString(R.string.google_sign_failed), Toast.LENGTH_LONG).show();
                             pd.dismiss();
@@ -209,7 +209,7 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
                             // upload the data on realtime firebase database...
-                            uploadDataToTheRealtimeDatabase(name, email, password, imageUrl, mAuth.getUid());
+                            uploadDataToTheRealtimeDatabase(name.toLowerCase(), email, password, imageUrl, mAuth.getUid());
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -224,7 +224,7 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
     // use to upload the details to the firebase realtime database...
 
     private void uploadDataToTheRealtimeDatabase(String name, String email, String password, String imageUrl, String uid) {
-        User user = new User(name, email, password, uid, imageUrl, "Your Address", "Hey there, I am using IChat.", "graduation", "offline");
+        User user = new User(name, email, password, uid, imageUrl, "Your Address", "Hey there, I am using IChat.", "graduation", "offline", false);
         database.getReference(getString(R.string.User)).child(uid).setValue(user)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

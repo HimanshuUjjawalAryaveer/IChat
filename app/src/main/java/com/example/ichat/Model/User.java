@@ -84,7 +84,7 @@ public class User {
     public User() {
 
     }
-    public User(String username, String email, String password, String userID, String imageUrl, String address, String about, String education, String status) {
+    public User(String username, String email, String password, String userID, String imageUrl, String address, String about, String education, String status, boolean videoCallStatus) {
         this.address = address;
         this.about = about;
         this.education = education;
@@ -94,9 +94,29 @@ public class User {
         this.userID = userID;
         this.imageUrl = imageUrl;
         this.status = status;
+        this.videoCallStatus = videoCallStatus;
     }
 
     private String imageUrl;
+    private boolean videoCallStatus;
+
+    public boolean isVideoCallStatus() {
+        return videoCallStatus;
+    }
+
+    public void setVideoCallStatus(boolean videoCallStatus) {
+        this.videoCallStatus = videoCallStatus;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
     private String status;
+    private long timestamp;
 
 }

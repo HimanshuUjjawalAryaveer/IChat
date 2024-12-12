@@ -1,5 +1,6 @@
 package com.example.ichat.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +16,7 @@ import android.view.ViewGroup;
 
 import com.example.ichat.Adapter.UserAdapter;
 import com.example.ichat.Model.Chats;
-import com.example.ichat.Model.Users;
+import com.example.ichat.Model.User;
 import com.example.ichat.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -25,7 +26,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -40,25 +40,38 @@ public class ChatFragment extends Fragment {
     private Intent intent;
     private FirebaseUser fuser;
     private DatabaseReference reference;
-    private ArrayList<Users> userInfoList;
+    private ArrayList<User> userInfoList;
     private ArrayList<String> userList;
+    private ProgressDialog pd;
+    private boolean isFlag = true;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);
         // here we initilize the recycler view and others
         init(view);
+        if(isFlag) {
+            progressDialog();
+            isFlag = false;
+        }
         // here we set the property of recycler view
         setRecyclerView(getContext());
         // here we get the data from the firebase using the firebaseAuth
         getData(getContext());
         return view;
     }
+
+    private void progressDialog() {
+        pd = new ProgressDialog(getContext());
+        pd.setTitle("Loading data...");
+        pd.setMessage("please wait");
+        pd.show();
+    }
     private void getData(Context context) {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         reference = FirebaseDatabase.getInstance().getReference("Chats");
         userList = new ArrayList<>();
-        reference.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
+        reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 userList.clear();
@@ -85,38 +98,42 @@ public class ChatFragment extends Fragment {
 
     private void readChats(Context context) {
         userInfoList = new ArrayList<>();
-        reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user));
 
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 userInfoList.clear(); // Clear the list before populating
 
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                    Users users = dataSnapshot.getValue(Users.class);
-                    if (users != null && userList.contains(users.getId())) {
+                    User user = dataSnapshot.getValue(User.class);
+                    if (user != null && userList.contains(user.getUserID())) {
                         // Check if the user is already in the list before adding
                         boolean userExists = false;
-                        for (Users users1 : userInfoList) {
-                            if (users1.getId().equals(users.getId())) {
+                        for (User users1 : userInfoList) {
+                            if (users1.getUserID().equals(user.getUserID())) {
                                 userExists = true;
                                 break;
                             }
                         }
 
                         if (!userExists) {
-                            userInfoList.add(users);
+                            userInfoList.add(user);
                         }
                     }
                 }
+
+                Collections.reverse(userInfoList);
                 // Set the adapter with the updated list
                 UserAdapter userAdapter = new UserAdapter(context, userInfoList, true);
                 recyclerView.setAdapter(userAdapter);
+                pd.dismiss();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 // Handle the error if needed
+                pd.dismiss();
             }
         });
     }

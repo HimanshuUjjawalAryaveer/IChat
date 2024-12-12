@@ -1,5 +1,6 @@
 package com.example.ichat.Home.Profile;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -21,6 +22,7 @@ import com.example.ichat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -35,6 +37,7 @@ public class ProfileInfoUpdateActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private AppCompatButton cancel, save;
     private EditText editText;
+    private ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +52,7 @@ public class ProfileInfoUpdateActivity extends AppCompatActivity {
         setStatusBarColor();
         init();
         setToolbar();
-        editText.setText(intent.getStringExtra("info"));
+        editText.setText(getIntent().getStringExtra("info"));
 
         cancel.setOnClickListener(view -> {
             startActivity(new Intent(ProfileInfoUpdateActivity.this, ProfileActivity.class));
@@ -57,22 +60,33 @@ public class ProfileInfoUpdateActivity extends AppCompatActivity {
         });
 
         save.setOnClickListener(view -> {
-            reference = FirebaseDatabase.getInstance().getReference("Users").child(Objects.requireNonNull(intent.getStringExtra("userId")));
-            Map<String, Object> updateMap = new HashMap<>();
-            updateMap.put(intent.getStringExtra("key"), editText.getText().toString());
-            reference.updateChildren(updateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Toast.makeText(getApplicationContext(), "sucessfully updated", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(ProfileInfoUpdateActivity.this, ProfileActivity.class));
-                    finish();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(), "failed", Toast.LENGTH_LONG).show();
-                }
-            });
+            pd = new ProgressDialog(this);
+            pd.setTitle("Uploading info...");
+            pd.setMessage("please wait...");
+            pd.show();
+            String path = getIntent().getStringExtra("userId");
+            if(path != null) {
+                reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(path);
+                Map<String, Object> updateMap = new HashMap<>();
+                updateMap.put(intent.getStringExtra("key"), editText.getText().toString().trim());
+                reference.updateChildren(updateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(getApplicationContext(), "sucessfully updated", Toast.LENGTH_LONG).show();
+                        pd.dismiss();
+                        intent = new Intent(ProfileInfoUpdateActivity.this, ProfileActivity.class);
+                        intent.putExtra("userID", path);
+                        startActivity(intent);
+                        finish();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "failed", Toast.LENGTH_LONG).show();
+                        pd.dismiss();
+                    }
+                });
+            }
         });
 
     }

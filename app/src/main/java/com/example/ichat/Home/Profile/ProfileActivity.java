@@ -1,5 +1,6 @@
 package com.example.ichat.Home.Profile;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -8,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -18,6 +20,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
+import com.example.ichat.Model.User;
 import com.example.ichat.Model.Users;
 import com.example.ichat.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
     private LinearLayout about, education, address;
     private Intent intent;
     private String userId, aboutInfo, educationInfo, addressInfo;
+    private ProgressDialog pd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
                 intent.putExtra("info", aboutInfo);
                 intent.putExtra("key", "about");
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -77,6 +82,7 @@ public class ProfileActivity extends AppCompatActivity {
                 intent.putExtra("info", educationInfo);
                 intent.putExtra("key", "education");
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -89,6 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
                 intent.putExtra("info", addressInfo);
                 intent.putExtra("key", "address");
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -106,32 +113,39 @@ public class ProfileActivity extends AppCompatActivity {
         addressText = findViewById(R.id.addressText);
     }
     private void readData() {
+        pd = new ProgressDialog(this);
+        pd.setTitle("Loading info...");
+        pd.setMessage("please wait...");
         Intent intent = getIntent();
         userId = intent.getStringExtra("userID");
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(userId);
-        reference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Users users = snapshot.getValue(Users.class);
-                assert users != null;
-                aboutInfo = users.getAbout();
-                educationInfo = users.getEducation();
-                addressInfo = users.getAddress();
-                userName.setText(getCapitalText(users.getUserName()));
-                aboutText.setText(users.getAbout());
-                educationText.setText(users.getEducation());
-                addressText.setText(users.getAddress());
-                mail.setText(users.getEmail());
-                if(users.getImage() != null) {
-                    Glide.with(getApplicationContext()).load(users.getImage()).into(image);
-                }
-            }
+        if(userId != null) {
+           DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(userId);
+           reference.addListenerForSingleValueEvent(new ValueEventListener() {
+               @Override
+               public void onDataChange(@NonNull DataSnapshot snapshot) {
+                   User user = snapshot.getValue(User.class);
+                   assert user != null;
+                   aboutInfo = user.getAbout();
+                   educationInfo = user.getEducation();
+                   addressInfo = user.getAddress();
+                   userName.setText(getCapitalText(user.getUsername()));
+                   aboutText.setText(aboutInfo);
+                   educationText.setText(educationInfo);
+                   addressText.setText(addressInfo);
+                   mail.setText(user.getEmail());
+                   if(user.getImageUrl() != null) {
+                       Glide.with(getApplicationContext()).load(user.getImageUrl()).into(image);
+                   }
+                   pd.dismiss();
+               }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+               @Override
+               public void onCancelled(@NonNull DatabaseError error) {
+                   Toast.makeText(ProfileActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                   pd.dismiss();
+               }
+           });
+        }
     }
     private void setStatusBarColor() {
         Window window = getWindow();

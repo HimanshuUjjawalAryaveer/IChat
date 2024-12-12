@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.ichat.Home.ChatMessageActivity;
 import com.example.ichat.Model.Chats;
+import com.example.ichat.Model.User;
 import com.example.ichat.R;
 import com.example.ichat.Model.Users;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,12 +37,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     Context context;
-    ArrayList<Users> list;
+    ArrayList<User> list;
     boolean isChat;
     private String lastMessage, lastDate;
 //    private static final String CHANNEL_ID = "HUA";
 //    private static final int NOTIFICATION_ID = 10;
-    public UserAdapter(Context context, ArrayList<Users> list, boolean isChat) {
+    public UserAdapter(Context context, ArrayList<User> list, boolean isChat) {
         this.context = context;
         this.list = list;
         this.isChat = isChat;
@@ -57,27 +58,27 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Users users = list.get(position);
-        holder.username.setText(getCapitalText(users.getUserName()));
+        User user = list.get(position);
+        holder.username.setText(getCapitalText(user.getUsername()));
         holder.lastTime.setText("09:00 AM");
 
         if(isChat) {
-            lastMessage(users.getId(), holder.lastMessage, holder.lastTime);
+            lastMessage(user.getUserID(), holder.lastMessage, holder.lastTime);
         } else {
             holder.lastMessage.setVisibility(View.GONE);
             holder.lastTime.setVisibility(View.GONE);
         }
 
-        if(users.getImage() == null) {
+        if(user.getImageUrl() == null) {
             holder.image.setImageResource(R.drawable.user_profile);
         } else {
-            Glide.with(context).load(users.getImage()).into(holder.image);
+            Glide.with(context).load(user.getImageUrl()).into(holder.image);
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, ChatMessageActivity.class);
-                intent.putExtra("userId", users.getId());
+                intent.putExtra("userId", user.getUserID());
                 context.startActivity(intent);
             }
         });
@@ -88,8 +89,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 dialog.setContentView(R.layout.image_show_block);
                 ImageView imageView = dialog.findViewById(R.id.show_image);
                 TextView textView = dialog.findViewById(R.id.userName);
-                textView.setText(getCapitalText(users.getUserName()));
-                Glide.with(context).load(users.getImage()).into(imageView);
+                textView.setText(getCapitalText(user.getUsername()));
+                if(user.getImageUrl() == null) {
+                    imageView.setBackgroundResource(R.drawable.user_profile);
+                } else {
+                    Glide.with(context).load(user.getImageUrl()).into(imageView);
+                }
                 dialog.show();
             }
         });
@@ -116,7 +121,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         if (!Objects.equals(string, "") && string != null) {
             String[] str =string.split(" ");
             for(int i=0; i<str.length; i++) {
-                str[i] = str[i].substring(0,1).toUpperCase() + str[i].substring(1);
+                str[i] = str[i].substring(0,1).toUpperCase() + str[i].substring(1).toLowerCase();
             }
             return String.join(" ", str);
         }
@@ -170,46 +175,4 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             return date;
         }
     }
-
-//    private void sendNotification() {
-////        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-//        Drawable drawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.user_profile, null);
-//        BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-//        assert bitmapDrawable != null;
-//        Bitmap largeIcon = bitmapDrawable.getBitmap();
-////        Notification notification = new Notification.Builder(this)
-////                .setLargeIcon(largeIcon)
-////                .setSmallIcon(R.drawable.chat)
-////                .setContentText("Himanshu")
-////                .setSubText("Ujjawal")
-////                .build();
-////        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-////            notificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "Aryaveer", NotificationManager.IMPORTANCE_HIGH));
-////        }
-////        notificationManager.notify(NOTIFICATION_ID, notification);
-//        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-//        Notification notification;
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//            notification = new Notification.Builder(context)
-//                    .setLargeIcon(largeIcon)
-//                    .setSmallIcon(R.drawable.chat)
-//                    .setContentText("Himanshu")
-//                    .setSubText("Ujjawal")
-//                    .setAutoCancel(false)
-//                    .setOngoing(true)
-//                    .setChannelId(CHANNEL_ID)
-//                    .build();
-//            notificationManager.createNotificationChannel(new NotificationChannel(CHANNEL_ID, "Arayveer", NotificationManager.IMPORTANCE_HIGH));
-//        } else {
-//            notification = new Notification.Builder(context)
-//                    .setLargeIcon(largeIcon)
-//                    .setSmallIcon(R.drawable.chat)
-//                    .setContentText("Himanshu")
-//                    .setSubText("Ujjawal")
-//                    .setAutoCancel(false)
-//                    .setOngoing(true)
-//                    .build();
-//        }
-//        notificationManager.notify(NOTIFICATION_ID, notification);
-//    }
 }
