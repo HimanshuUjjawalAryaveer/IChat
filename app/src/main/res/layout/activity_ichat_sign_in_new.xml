@@ -73,6 +73,7 @@ android:background="@drawable/wallpaper">
         android:paddingHorizontal="10dp"
         android:paddingVertical="10dp"
         android:textColorHint="@color/white1"
+        android:textColor="@color/white"
         android:id="@+id/user_email"/>
 
     <EditText
@@ -82,6 +83,7 @@ android:background="@drawable/wallpaper">
         android:autofillHints=""
         android:background="@drawable/edit_bg"
         android:hint="@string/password"
+        android:textColor="@color/white"
         android:inputType="textWebPassword"
         android:paddingHorizontal="10dp"
         android:paddingVertical="10dp"

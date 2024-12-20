@@ -23,15 +23,17 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Home.Call.IChatVideoCallConnectingActivity"
+            android:exported="false"/>
+        <activity
             android:name=".Home.Call.IChatVideoCallActivity"
-            android:exported="true">
-        </activity>
+            android:exported="false"/>
         <activity
             android:name=".login.IChatSignInNewActivity"
             android:exported="false" />
         <activity
             android:name=".login.IChatSignUpNewActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".Home.Profile.ProfileInfoUpdateActivity"
             android:exported="false"
@@ -46,7 +48,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".login.CreateAccountActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".login.IChatSignUpActivity"
             android:exported="false"

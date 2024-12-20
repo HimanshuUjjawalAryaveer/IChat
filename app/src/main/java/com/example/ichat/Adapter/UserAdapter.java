@@ -18,7 +18,6 @@ import com.example.ichat.Home.ChatMessageActivity;
 import com.example.ichat.Model.Chats;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
-import com.example.ichat.Model.Users;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -40,8 +39,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     ArrayList<User> list;
     boolean isChat;
     private String lastMessage, lastDate;
-//    private static final String CHANNEL_ID = "HUA";
-//    private static final int NOTIFICATION_ID = 10;
     public UserAdapter(Context context, ArrayList<User> list, boolean isChat) {
         this.context = context;
         this.list = list;

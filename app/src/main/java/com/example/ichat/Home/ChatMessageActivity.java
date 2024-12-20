@@ -28,10 +28,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.ichat.Adapter.MessageAdapter;
+import com.example.ichat.Home.Call.IChatVideoCallConnectingActivity;
 import com.example.ichat.Home.Profile.ProfileActivity;
 import com.example.ichat.Model.Chats;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -65,7 +68,7 @@ public class ChatMessageActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private final String[] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
     private static final int REQUEST_CODE = 3;
-    private LinearLayout call;
+    private LinearLayout call, callAnswer, callDecline;
 
 
     @Override
@@ -87,6 +90,17 @@ public class ChatMessageActivity extends AppCompatActivity {
                 }
                 message.setText("");
             });
+
+        callAnswer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isPermissionGranted()) {
+                    setVideoCallStatus();
+                } else {
+                    askPermission();
+                }
+            }
+        });
     }
 
     private void checkVideoCall() {
@@ -164,6 +178,8 @@ public class ChatMessageActivity extends AppCompatActivity {
         messageSendBtn = findViewById(R.id.message_send_btn);
         recyclerView = findViewById(R.id.recycler_view);
         call = findViewById(R.id.call);
+        callAnswer = findViewById(R.id.call_answer);
+        callDecline = findViewById(R.id.call_decline);
     }
     private void setRecyclerView(Context context) {
         recyclerView.setHasFixedSize(true);
@@ -313,7 +329,15 @@ public class ChatMessageActivity extends AppCompatActivity {
             DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(uID);
             Map<String, Object> setVideoCallStatus = new HashMap<>();
             setVideoCallStatus.put("videoCallStatus", true);
-            reference1.updateChildren(setVideoCallStatus);
+            reference1.updateChildren(setVideoCallStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Intent intent = new Intent(ChatMessageActivity.this, IChatVideoCallConnectingActivity.class);
+                    intent.putExtra("userID", uID);
+                    startActivity(intent);
+                    finish();
+                }
+            });
         }
     }
 }

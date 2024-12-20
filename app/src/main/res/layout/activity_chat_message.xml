@@ -42,14 +42,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/user"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="incoming call form User"
-            android:textColor="#CC625C5C"/>
+            android:textColor="@color/white1"
+            tools:ignore="HardcodedText" />
       </LinearLayout>
 
     </LinearLayout>
@@ -59,6 +60,7 @@
         android:layout_height="wrap_content"
         android:gravity="center">
         <LinearLayout
+            android:id="@+id/call_answer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -84,6 +86,7 @@
 
 
       <LinearLayout
+          android:id="@+id/call_decline"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:gravity="center"

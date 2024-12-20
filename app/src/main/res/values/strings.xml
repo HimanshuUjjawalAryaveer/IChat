@@ -17,11 +17,10 @@
     <string name="read_term_and_conditions">Read Term and Conditions…</string>
     <string name="create_account">Create Account</string>
     <string name="logout">Logout</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="user">User</string>
     <string name="last_message">last message</string>
-    <string name="type_a_message">Type a message...</string>
+    <string name="type_a_message">Type a message…</string>
     <string name="message">message</string>
     <string name="_00_00_am">00:00 AM</string>
     <string name="profile">Profile</string>
@@ -34,7 +33,7 @@
     <string name="address">Address</string>
     <string name="add_your_address">Add your address</string>
     <string name="current_set_to">current set to</string>
-    <string name="cancel">cancel</string>
+    <string name="cancel">Cancel</string>
     <string name="save">save</string>
     <string name="offline">offline</string>
     <string name="search_users">search users</string>
@@ -44,17 +43,18 @@
     <string name="welcome_to_ichat_ichat_is_the_social_chatting_application_that_is_used_to_chatting_with_each_other">Welcome to IChat, IChat is the social chatting application that is used to chatting with each other.</string>
     <string name="create_account_1">Create Account</string>
     <string name="name">Name</string>
-    <string name="please_signup_to_continue">please signup to continue...</string>
+    <string name="please_signup_to_continue">please signup to continue…</string>
     <string name="sign_up_with_google">Sign up with Google</string>
     <string name="default_web_client_id">1012085262583-htioavchpc4sm5bcnhj1is0iki6n7cug.apps.googleusercontent.com</string>
     <string name="fill_detail">fill all the details</string>
     <string name="google_sign_failed">failed google sing in</string>
     <string name="User">User</string>
     <string name="login_account">Login Account</string>
-    <string name="please_login_to_continue">please login to continue...</string>
+    <string name="please_login_to_continue">please login to continue…</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="himanshu_singh_bhamaniya">Himanshu Singh Bhamaniya</string>
-    <string name="uttar_pardesh">uttar pardesh</string>
+    <string name="uttar_pardesh">Uttar Pardesh</string>
     <string name="answer">Answer</string>
     <string name="decline">Decline</string>
+    <string name="filePath">file:android_asset/call.html</string>
 </resources>

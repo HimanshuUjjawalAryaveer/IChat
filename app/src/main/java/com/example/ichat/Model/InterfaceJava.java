@@ -11,6 +11,6 @@ public class InterfaceJava {
     }
     @JavascriptInterface
     public void onPeerConnected() {
-//        iChatVideoCallActivity.onPeerConnected();  create this method in the video call activity...
+        iChatVideoCallActivity.onPeerConnected();      //create this method in the video call activity...
     }
 }
