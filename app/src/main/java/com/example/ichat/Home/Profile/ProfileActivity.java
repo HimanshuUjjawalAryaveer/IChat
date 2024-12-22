@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -21,7 +22,6 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.ichat.Model.User;
-import com.example.ichat.Model.Users;
 import com.example.ichat.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,6 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
     private Intent intent;
     private String userId, aboutInfo, educationInfo, addressInfo;
     private ProgressDialog pd;
+    private AppCompatButton profileButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,21 @@ public class ProfileActivity extends AppCompatActivity {
         init();
         readData();
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert firebaseUser != null;
+
+        //   use for to display button only when the current user can watch the profile
+        if(!firebaseUser.getUid().equals(getIntent().getStringExtra("userID"))) {
+            profileButton.setVisibility(View.GONE);
+        }
+
+        //  use to switch to the update activity
+        profileButton.setOnClickListener(v -> {
+            intent = new Intent(ProfileActivity.this, ProfileUpdate.class);
+            intent.putExtra("userId", userId);
+            startActivity(intent);
+        });
+
         about.setOnClickListener((View v) -> {
-            assert firebaseUser != null;
             if(Objects.equals(userId, Objects.requireNonNull(firebaseUser.getUid()))) {
                 intent = new Intent(ProfileActivity.this, ProfileInfoUpdateActivity.class);
                 intent.putExtra("name", "About");
@@ -74,7 +88,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         education.setOnClickListener((View v) -> {
-            assert firebaseUser != null;
             if(Objects.equals(userId, Objects.requireNonNull(firebaseUser.getUid()))) {
                 intent = new Intent(ProfileActivity.this, ProfileInfoUpdateActivity.class);
                 intent.putExtra("name", "Education");
@@ -87,7 +100,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         address.setOnClickListener((View v) -> {
-            assert firebaseUser != null;
             if(Objects.equals(userId, Objects.requireNonNull(firebaseUser.getUid()))) {
                 intent = new Intent(ProfileActivity.this, ProfileInfoUpdateActivity.class);
                 intent.putExtra("name", "Address");
@@ -100,9 +112,10 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
     private void init() {
-        image = findViewById(R.id.image);
+        image = findViewById(R.id.image_image);
         userName = findViewById(R.id.userName);
         mail = findViewById(R.id.mail);
+        profileButton = findViewById(R.id.edit_profile);
 
         about = findViewById(R.id.aboutGroup);
         education = findViewById(R.id.educationGroup);
@@ -120,7 +133,7 @@ public class ProfileActivity extends AppCompatActivity {
         userId = intent.getStringExtra("userID");
         if(userId != null) {
            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(userId);
-           reference.addListenerForSingleValueEvent(new ValueEventListener() {
+           reference.addValueEventListener(new ValueEventListener() {
                @Override
                public void onDataChange(@NonNull DataSnapshot snapshot) {
                    User user = snapshot.getValue(User.class);

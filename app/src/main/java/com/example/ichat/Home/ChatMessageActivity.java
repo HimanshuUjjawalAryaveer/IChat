@@ -171,7 +171,7 @@ public class ChatMessageActivity extends AppCompatActivity {
 
     private void init() {
         toolbar = findViewById(R.id.toolbar);
-        image = findViewById(R.id.image);
+        image = findViewById(R.id.image_image);
         username = findViewById(R.id.userName);
         status = findViewById(R.id.status);
         message = findViewById(R.id.message);
@@ -287,7 +287,7 @@ public class ChatMessageActivity extends AppCompatActivity {
                         Map<String, Object> updateChild = new HashMap<>();
                         updateChild.put("seen", true);
                         dataSnapshot.getRef().updateChildren(updateChild);
-                    }
+                    }   
                 }
             }
 
