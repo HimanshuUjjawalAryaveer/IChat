@@ -1,26 +1,31 @@
-package com.example.ichat.Home;
+package com.example.ichat.Home.Activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -34,6 +39,8 @@ import com.example.ichat.Model.Chats;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -42,6 +49,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,23 +64,29 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatMessageActivity extends AppCompatActivity {
 
+    private final static int PICK_IMAGES = 3;
     private Toolbar toolbar;
-    private CircleImageView image;
+    private CircleImageView image, userProfile;
+    private ImageView sendingImage;
     private TextView username, status;
     private EditText message;
-    private ImageButton messageSendBtn;
+    private ImageButton messageSendBtn, cancelButton, sendButton;
     private RecyclerView recyclerView;
     private String uID;
     private FirebaseUser user;
     private DatabaseReference reference;
+    private FirebaseStorage storage;
     private MessageAdapter messageAdapter;
     private ArrayList<Chats> chats;
     private ValueEventListener valueEventListener;
     private final String[] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
     private static final int REQUEST_CODE = 3;
     private LinearLayout call, callAnswer, callDecline;
+    private ConstraintLayout imageBlock;
+    private Uri imageUri;
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +102,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         messageSendBtn.setOnClickListener((View v) -> {
                 String chatMessage = message.getText().toString();
                 if(!chatMessage.isEmpty()) {
-                    sendMessage(user.getUid(), uID, chatMessage, setTime()[0], setTime()[1]);
+                    sendMessage(user.getUid(), uID, chatMessage, setTime()[0], setTime()[1], "text");
                 }
                 message.setText("");
             });
@@ -101,6 +117,73 @@ public class ChatMessageActivity extends AppCompatActivity {
                 }
             }
         });
+
+        message.setOnTouchListener((v, event) -> setClickOnTheCamera(event, message));
+
+        cancelButton.setOnClickListener(v -> setCancelButtonFunctionality());
+
+        sendButton.setOnClickListener(v -> sendImageMessage(user.getUid(), uID, imageUri, setTime()[0], setTime()[1]));
+    }
+
+    private void setCancelButtonFunctionality() {
+        imageBlock.setVisibility(View.GONE);
+    }
+
+    private void init() {
+        toolbar = findViewById(R.id.toolbar);
+        image = findViewById(R.id.profile_image);
+        username = findViewById(R.id.userName);
+        status = findViewById(R.id.status);
+        message = findViewById(R.id.message);
+        messageSendBtn = findViewById(R.id.message_send_btn);
+        recyclerView = findViewById(R.id.recycler_view);
+        call = findViewById(R.id.call);
+        callAnswer = findViewById(R.id.call_answer);
+        callDecline = findViewById(R.id.call_decline);
+        sendingImage = findViewById(R.id.sending_image);
+        imageBlock = findViewById(R.id.image_block);
+        cancelButton = findViewById(R.id.cancel_button);
+        sendButton = findViewById(R.id.send_button);
+        userProfile = findViewById(R.id.user_profile);
+    }
+
+    private boolean setClickOnTheCamera(@NonNull MotionEvent event, EditText editText) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            if (event.getRawX() >= (editText.getRight() - editText.getCompoundDrawables()[2].getBounds().width())) {
+                openGallery();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void openGallery() {
+        Intent gallery = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(gallery, PICK_IMAGES);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PICK_IMAGES && resultCode == RESULT_OK && data != null) {
+            imageUri = data.getData();
+            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(getString(R.string.user));
+            reference1.child(uID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    User user1 = snapshot.getValue(User.class);
+                    assert user1 != null;
+                    Glide.with(getApplicationContext()).load(user1.getImageUrl()).into(userProfile);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+            imageBlock.setVisibility(View.VISIBLE);
+            sendingImage.setImageURI(imageUri);
+        }
     }
 
     private void checkVideoCall() {
@@ -169,25 +252,13 @@ public class ChatMessageActivity extends AppCompatActivity {
         return "";
     }
 
-    private void init() {
-        toolbar = findViewById(R.id.toolbar);
-        image = findViewById(R.id.image_image);
-        username = findViewById(R.id.userName);
-        status = findViewById(R.id.status);
-        message = findViewById(R.id.message);
-        messageSendBtn = findViewById(R.id.message_send_btn);
-        recyclerView = findViewById(R.id.recycler_view);
-        call = findViewById(R.id.call);
-        callAnswer = findViewById(R.id.call_answer);
-        callDecline = findViewById(R.id.call_decline);
-    }
     private void setRecyclerView(Context context) {
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
     }
-    private void sendMessage(String sender, String receiver, String message, String time, String date) {
+    private void sendMessage(String sender, String receiver, String message, String time, String date, String messageType) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         DatabaseReference userReference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(receiver);
         HashMap<String, Object> userChat = new HashMap<>();
@@ -196,12 +267,51 @@ public class ChatMessageActivity extends AppCompatActivity {
         userChat.put("receiver", receiver);
         userChat.put("message", message);
         userChat.put("seen", false);
+        userChat.put("messageType", messageType);
         userChat.put("time", time);
         userChat.put("date", date);
         userChat.put("timestamp", System.currentTimeMillis());
         reference.child("Chats").push().setValue(userChat);
         userLastChatTime.put("timestamp", System.currentTimeMillis());
         userReference.updateChildren(userLastChatTime);
+    }
+    private void sendImageMessage(String sender, String receiver, Uri imageUri, String time, String date) {
+
+        imageBlock.setVisibility(View.GONE);
+
+        storage = FirebaseStorage.getInstance();
+        // Create unique file reference
+        StorageReference storeRef = storage.getReference().child("images/" + System.currentTimeMillis() + ".jpg");
+
+        // Upload file to Firebase Storage
+        storeRef.putFile(imageUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Get the download URL after successful upload
+                        storeRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                // Get the URL as a string
+                                String imageUrl = uri.toString();
+
+                                sendMessage(sender, receiver, imageUrl, time, date, "image");
+
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(ChatMessageActivity.this, "Failed to get URL: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(ChatMessageActivity.this, "Upload failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
     private void setToolbar() {
         setSupportActionBar(toolbar);

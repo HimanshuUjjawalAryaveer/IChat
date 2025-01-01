@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.ichat.Home.ChatMessageActivity;
+import com.example.ichat.Home.Activity.ChatMessageActivity;
 import com.example.ichat.Model.Chats;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
@@ -109,7 +109,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.username);
-            image = itemView.findViewById(R.id.image_image);
+            image = itemView.findViewById(R.id.profile_image);
             lastMessage = itemView.findViewById(R.id.last_message);
             lastTime = itemView.findViewById(R.id.last_time);
         }

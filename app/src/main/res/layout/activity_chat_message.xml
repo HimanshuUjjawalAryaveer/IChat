@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home.ChatMessageActivity"
+    tools:context=".Home.Activity.ChatMessageActivity"
     android:fitsSystemWindows="true">
 
   <LinearLayout
@@ -131,7 +131,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:src="@drawable/user_profile"
-            android:id="@+id/image_image"/>
+            android:id="@+id/profile_image"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -177,8 +177,8 @@
       android:layout_marginStart="10dp"
       android:layout_marginEnd="10dp"
       android:layout_marginBottom="10dp"
-      android:id="@+id/mess_block"
-      android:layout_marginTop="5dp">
+      android:layout_marginTop="5dp"
+      android:id="@+id/mess_block">
     <EditText
         android:layout_width="0dp"
         android:layout_height="50dp"
@@ -189,7 +189,9 @@
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:background="@drawable/message_sender_bg"
-        android:id="@+id/message"/>
+        android:id="@+id/message"
+        android:drawableEnd="@drawable/camera"
+        android:hapticFeedbackEnabled="false"/>
 
     <ImageButton
         android:layout_width="50dp"
@@ -199,5 +201,84 @@
         android:layout_marginStart="5dp"
         android:id="@+id/message_send_btn"/>
   </LinearLayout>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/image_block"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_alignParentBottom="true"
+      android:layout_marginStart="10dp"
+      android:layout_marginTop="5dp"
+      android:layout_marginEnd="10dp"
+      android:layout_marginBottom="10dp"
+      android:background="@drawable/message_sender_bg"
+      android:elevation="3dp"
+      android:visibility="gone">
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send to..."
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sending_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.050000012"
+        tools:ignore="HardcodedText" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_profile"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="3dp"
+        android:src="@drawable/user_profile"
+        app:civ_border_color="@color/blue"
+        app:civ_border_width="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageView
+        android:id="@+id/sending_image"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:contentDescription="@string/todo"
+        android:src="@drawable/user_profile"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginVertical="15dp"/>
+
+    <ImageButton
+        android:id="@+id/cancel_button"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:background="@drawable/remove"
+        android:contentDescription="@string/todo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sending_image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.20999998" />
+
+    <ImageButton
+        android:id="@+id/send_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/send"
+        android:contentDescription="@string/todo"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sending_image"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.82" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
 
   </RelativeLayout>

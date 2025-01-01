@@ -23,7 +23,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
-import com.example.ichat.login.IChatSignUpNewActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -92,7 +91,7 @@ public class ProfileUpdate extends AppCompatActivity {
     }
 
     private void init() {
-        profileImage = findViewById(R.id.image_image);
+        profileImage = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
         email = findViewById(R.id.emil);
         updateButton = findViewById(R.id.update_button);

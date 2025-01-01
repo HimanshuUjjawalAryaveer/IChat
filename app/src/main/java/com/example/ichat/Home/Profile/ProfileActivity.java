@@ -112,7 +112,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
     private void init() {
-        image = findViewById(R.id.image_image);
+        image = findViewById(R.id.profile_image);
         userName = findViewById(R.id.userName);
         mail = findViewById(R.id.mail);
         profileButton = findViewById(R.id.edit_profile);

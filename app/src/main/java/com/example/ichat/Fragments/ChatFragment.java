@@ -13,11 +13,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.ichat.Adapter.UserAdapter;
 import com.example.ichat.Model.Chats;
 import com.example.ichat.Model.User;
+import com.example.ichat.Notification.Token;
 import com.example.ichat.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,7 +63,25 @@ public class ChatFragment extends Fragment {
         setRecyclerView(getContext());
         // here we get the data from the firebase using the firebaseAuth
         getData(getContext());
+
+//        FirebaseMessaging.getInstance().getToken()
+//                .addOnCompleteListener(new OnCompleteListener<String>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<String> task) {
+//                        if(!task.isSuccessful()) {
+//                            Toast.makeText(getContext(), "token registration failed", Toast.LENGTH_LONG).show();
+//                            return;
+//                        }
+//                        updateToken(task.getResult());
+//                    }
+//                });
         return view;
+    }
+
+    private void updateToken(String token) {
+        reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(fuser.getUid()).setValue(token1);
     }
 
     private void progressDialog() {

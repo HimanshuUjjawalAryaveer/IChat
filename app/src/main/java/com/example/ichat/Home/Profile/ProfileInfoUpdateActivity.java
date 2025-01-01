@@ -72,7 +72,7 @@ public class ProfileInfoUpdateActivity extends AppCompatActivity {
                 reference.updateChildren(updateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(getApplicationContext(), "sucessfully updated", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "successfully updated", Toast.LENGTH_LONG).show();
                         pd.dismiss();
                         intent = new Intent(ProfileInfoUpdateActivity.this, ProfileActivity.class);
                         intent.putExtra("userID", path);

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingVertical="5dp"
     android:paddingHorizontal="10dp">
 
@@ -13,14 +14,20 @@
         android:padding="10dp"
         android:background="@drawable/background_left_chat"
         tools:ignore="UselessParent">
-        <TextView
+        <androidx.cardview.widget.CardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/message"
-            android:id="@+id/show_message"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            />
+            android:layout_marginBottom="5dp"
+            app:cardCornerRadius="10dp"
+            android:elevation="0dp">
+            <ImageView
+                android:id="@+id/show_image"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:contentDescription="@string/todo"
+                android:src="@drawable/wallpaper"
+                android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

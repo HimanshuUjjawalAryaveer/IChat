@@ -5,6 +5,16 @@ public class Chats {
     private String sender;
     private String message;
 
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+
+    private String messageType;
+
     public long getTimestamp() {
         return timestamp;
     }

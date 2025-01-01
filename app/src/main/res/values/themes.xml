@@ -12,6 +12,12 @@
         <item name="colorOnPrimary">@color/white</item>
     </style>
 
+    <style name="IChatCustomToolbarForImageZoom" parent="Theme.AppCompat.DayNight" >
+        <item name="colorPrimary">@color/transparent_black</item>
+        <item name="colorPrimaryDark">@color/transparent_black</item>
+        <item name="colorOnPrimary">@color/white</item>
+    </style>
+
 <!--    style for the message chat-->
     <style name="IChatCustomToolbarForMessageChat" parent="Theme.AppCompat.Light.NoActionBar" >
         <item name="colorPrimary">@color/light_blue</item>

@@ -12,7 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
-import com.example.ichat.Home.ChatMessageActivity;
+import com.example.ichat.Home.Activity.ChatMessageActivity;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
 import com.google.android.gms.tasks.OnCompleteListener;

@@ -9,7 +9,7 @@
     android:background="@color/white">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/image_image"
+        android:id="@+id/profile_image"
         android:layout_width="160dp"
         android:layout_height="160dp"
         android:src="@drawable/user_profile"
@@ -26,7 +26,7 @@
         android:layout_height="2dp"
         android:background="@color/user_block_des"
         app:layout_constraintBottom_toTopOf="@+id/username"
-        app:layout_constraintTop_toBottomOf="@+id/image_image"
+        app:layout_constraintTop_toBottomOf="@+id/profile_image"
         android:layout_marginHorizontal="25dp"/>
 
     <EditText
@@ -42,9 +42,9 @@
         android:textColor="@color/black"
         android:textColorHint="@color/user_block_des"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/image_image"
-        app:layout_constraintStart_toStartOf="@+id/image_image"
-        app:layout_constraintTop_toBottomOf="@+id/image_image"
+        app:layout_constraintEnd_toEndOf="@+id/profile_image"
+        app:layout_constraintStart_toStartOf="@+id/profile_image"
+        app:layout_constraintTop_toBottomOf="@+id/profile_image"
         app:layout_constraintVertical_bias="0.18"
         tools:ignore="HardcodedText,LabelFor" />
 
