@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.ichat"
-        minSdk = 24
+        minSdk = 34
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -45,7 +45,7 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     //  dependency use for the firebase services...
-    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-messaging")
@@ -61,6 +61,19 @@ dependencies {
     // adding the dependency of the retrofit library...
     implementation ("com.squareup.retrofit2:retrofit:2.9.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //  use for the reaction template...
+    implementation ("com.github.pgreze:android-reactions:1.6")
+
+    //  use for the circular status view...
+    implementation ("com.github.3llomi:CircularStatusView:V1.0.3")
+
+
+//        // Also add the dependencies for the Credential Manager libraries and specify their versions
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
 
 
 }

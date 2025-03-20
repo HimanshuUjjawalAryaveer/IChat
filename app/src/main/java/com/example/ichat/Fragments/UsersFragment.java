@@ -18,7 +18,6 @@ import android.widget.EditText;
 import com.example.ichat.Adapter.UserAdapter;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
-import com.example.ichat.Model.Users;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;

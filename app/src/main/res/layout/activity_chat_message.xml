@@ -179,7 +179,7 @@
       android:layout_marginBottom="10dp"
       android:layout_marginTop="5dp"
       android:id="@+id/mess_block">
-    <EditText
+      <EditText
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:hint="@string/type_a_message"
@@ -193,7 +193,7 @@
         android:drawableEnd="@drawable/camera"
         android:hapticFeedbackEnabled="false"/>
 
-    <ImageButton
+      <ImageButton
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/send"

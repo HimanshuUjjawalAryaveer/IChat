@@ -13,15 +13,15 @@ import java.util.Objects;
 
 public class IChatSplash extends AppCompatActivity {
 
-    private Intent intent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_ichat_splash);
 
-        Objects.requireNonNull(getSupportActionBar()).hide();
-        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        Objects.requireNonNull(getSupportActionBar()).hide();   /* hides the action bar */
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();   /* checks if the user is logged in or not */
+        Intent intent;
 
         if(firebaseUser != null) {
             intent = new Intent(IChatSplash.this, HomeActivity.class);
@@ -32,7 +32,7 @@ public class IChatSplash extends AppCompatActivity {
             @Override
             public void run() {
                 startActivity(intent);
-                finish();
+                finishAffinity();
             }
         }, 3000);
     }

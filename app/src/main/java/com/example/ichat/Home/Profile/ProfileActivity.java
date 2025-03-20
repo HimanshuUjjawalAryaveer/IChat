@@ -63,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         assert firebaseUser != null;
 
-        //   use for to display button only when the current user can watch the profile
+        //   use for to show button only when the current user can watch the profile
         if(!firebaseUser.getUid().equals(getIntent().getStringExtra("userID"))) {
             profileButton.setVisibility(View.GONE);
         }

@@ -1,8 +1,19 @@
 package com.example.ichat.Model;
 
+import java.util.ArrayList;
+
 public class User {
+    private ArrayList<StatusData> statusData;
     public String getAddress() {
         return address;
+    }
+
+    public ArrayList<StatusData> getStatusData() {
+        return statusData;
+    }
+
+    public void setStatusData(ArrayList<StatusData> statusData) {
+        this.statusData = statusData;
     }
 
     public void setAddress(String address) {

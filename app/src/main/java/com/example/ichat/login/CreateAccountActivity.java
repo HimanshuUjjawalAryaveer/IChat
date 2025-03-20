@@ -2,7 +2,6 @@ package com.example.ichat.login;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,28 +28,19 @@ public class CreateAccountActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        hideActionBar();
 
-        init();
 
-        createAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(CreateAccountActivity.this, IChatSignUpNewActivity.class));
-            }
-        });
+        hideActionBar();   // hides the action bar using this fn...
+        init();            //  initializes the buttons
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(CreateAccountActivity.this, IChatSignInNewActivity.class));
-            }
-        });
+        createAccount.setOnClickListener(view -> startActivity(new Intent(CreateAccountActivity.this, IChatSignUpNewActivity.class)));
+        login.setOnClickListener(view -> startActivity(new Intent(CreateAccountActivity.this, IChatSignInNewActivity.class)));
+
     }
+
     private void hideActionBar() {
         Objects.requireNonNull(getSupportActionBar()).hide();
     }
-
     private void init() {
         createAccount = findViewById(R.id.createAccount);
         login = findViewById(R.id.login);

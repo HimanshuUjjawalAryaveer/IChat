@@ -259,10 +259,13 @@ public class ChatMessageActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
     }
     private void sendMessage(String sender, String receiver, String message, String time, String date, String messageType) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Chats");
         DatabaseReference userReference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(receiver);
+        //  getting the unique id for the chat...
+        String uniqueId = reference.push().getKey();
         HashMap<String, Object> userChat = new HashMap<>();
         HashMap<String, Object> userLastChatTime = new HashMap<>();
+        userChat.put("chatId", uniqueId);
         userChat.put("sender", sender);
         userChat.put("receiver", receiver);
         userChat.put("message", message);
@@ -271,7 +274,9 @@ public class ChatMessageActivity extends AppCompatActivity {
         userChat.put("time", time);
         userChat.put("date", date);
         userChat.put("timestamp", System.currentTimeMillis());
-        reference.child("Chats").push().setValue(userChat);
+        userChat.put("feeling", -1);
+        assert uniqueId != null;
+        reference.child(uniqueId).setValue(userChat);
         userLastChatTime.put("timestamp", System.currentTimeMillis());
         userReference.updateChildren(userLastChatTime);
     }
@@ -281,7 +286,7 @@ public class ChatMessageActivity extends AppCompatActivity {
 
         storage = FirebaseStorage.getInstance();
         // Create unique file reference
-        StorageReference storeRef = storage.getReference().child("images/" + System.currentTimeMillis() + ".jpg");
+        StorageReference storeRef = storage.getReference("ChatImage").child("images/" + System.currentTimeMillis() + ".jpg");
 
         // Upload file to Firebase Storage
         storeRef.putFile(imageUri)

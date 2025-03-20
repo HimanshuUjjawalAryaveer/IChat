@@ -55,7 +55,10 @@ public class ProfileInfoUpdateActivity extends AppCompatActivity {
         editText.setText(getIntent().getStringExtra("info"));
 
         cancel.setOnClickListener(view -> {
-            startActivity(new Intent(ProfileInfoUpdateActivity.this, ProfileActivity.class));
+            String path = getIntent().getStringExtra("userId");
+            intent = new Intent(ProfileInfoUpdateActivity.this, ProfileActivity.class);
+            intent.putExtra("userID", path);
+            startActivity(intent);
             finish();
         });
 

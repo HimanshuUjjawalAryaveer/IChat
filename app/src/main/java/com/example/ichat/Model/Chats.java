@@ -4,6 +4,24 @@ public class Chats {
     private String receiver;
     private String sender;
     private String message;
+    private int feeling;
+    private String chatId;
+
+    public String getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
+    }
+
+    public int getFeeling() {
+        return feeling;
+    }
+
+    public void setFeeling(int feeling) {
+        this.feeling = feeling;
+    }
 
     public String getMessageType() {
         return messageType;

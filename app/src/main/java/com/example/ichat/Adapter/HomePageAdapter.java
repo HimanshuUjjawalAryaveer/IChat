@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.ichat.Fragments.UsersFragment;
 import com.example.ichat.Fragments.ChatFragment;
-import com.example.ichat.Fragments.StatusFragment;
+import com.example.ichat.Fragments.Status.StatusFragment;
 
 public class HomePageAdapter extends FragmentPagerAdapter {
     public HomePageAdapter(@NonNull FragmentManager fm) {
