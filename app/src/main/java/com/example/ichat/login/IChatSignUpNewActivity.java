@@ -30,7 +30,7 @@ import androidx.credentials.GetCredentialResponse;
 import androidx.credentials.exceptions.GetCredentialException;
 
 import com.example.ichat.CustomDialog.CustomProgressDialog;
-import com.example.ichat.Home.Activity.HomeActivity;
+import com.example.ichat.Home.HomeActivity.HomeActivity;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
 import com.google.android.gms.tasks.OnCompleteListener;

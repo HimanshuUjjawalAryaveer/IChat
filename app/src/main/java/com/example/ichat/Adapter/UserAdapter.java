@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.ichat.Home.Activity.ChatMessageActivity;
+import com.example.ichat.Home.HomeActivity.ChatMessageActivity;
 import com.example.ichat.Model.Chats;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;

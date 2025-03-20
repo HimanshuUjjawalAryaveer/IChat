@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.ichat.Home.Activity.HomeActivity;
+import com.example.ichat.Home.HomeActivity.HomeActivity;
 import com.example.ichat.R;
 import com.example.ichat.login.CreateAccountActivity;
 import com.google.firebase.auth.FirebaseAuth;

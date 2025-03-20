@@ -1,4 +1,4 @@
-package com.example.ichat.Home.Activity;
+package com.example.ichat.Home.HomeActivity;
 
 import android.content.Intent;
 import android.os.Bundle;

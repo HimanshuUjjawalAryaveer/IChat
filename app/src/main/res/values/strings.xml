@@ -49,6 +49,7 @@
     <string name="fill_detail">fill all the details</string>
     <string name="google_sign_failed">failed google sing in</string>
     <string name="User">User</string>
+    <string name="Chats">Chats</string>
     <string name="login_account">Login Account</string>
     <string name="please_login_to_continue">please login to continue…</string>
     <string name="sign_in_with_google">Sign in with Google</string>

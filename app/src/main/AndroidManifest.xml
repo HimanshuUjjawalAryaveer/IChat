@@ -27,7 +27,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize"/>
         <activity
-            android:name=".Home.Activity.IChatImageShowActivity"
+            android:name=".Home.HomeActivity.IChatImageShowActivity"
             android:exported="false"
             android:theme="@style/IChatCustomToolbarForImageZoom" />
         <activity
@@ -53,7 +53,7 @@
             android:name=".Home.Profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".Home.Activity.ChatMessageActivity"
+            android:name=".Home.HomeActivity.ChatMessageActivity"
             android:exported="false"
             android:theme="@style/IChatCustomToolbarForMessageChat"
             android:windowSoftInputMode="adjustResize" />
@@ -70,7 +70,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Home.Activity.HomeActivity"
+            android:name=".Home.HomeActivity.HomeActivity"
             android:exported="false" />
     </application>
 
