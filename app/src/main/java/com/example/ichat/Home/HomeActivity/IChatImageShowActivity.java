@@ -4,11 +4,9 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -17,16 +15,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.example.ichat.R;
 
-import java.util.Objects;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class IChatImageShowActivity extends AppCompatActivity {
 
     private ImageView image;
-    private Toolbar toolbar;
-    private CircleImageView profileImage;
-    private TextView userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,58 +30,26 @@ public class IChatImageShowActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        init();
-        setStatusBarColor();
-        Objects.requireNonNull(getSupportActionBar()).setIcon(R.drawable.user_profile);
-//        setToolbar();
 
-//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user));
-//        reference.child(Objects.requireNonNull(getIntent().getStringExtra("userId"))).addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                User user = snapshot.getValue(User.class);
-//                assert user != null;
-//                Glide.with(getApplicationContext()).load(user.getImageUrl()).into(profileImage);
-//                userName.setText(getCapitalText(user.getUsername()));
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-        //  get the image url from the intent...
+        ///   use to initialize the view...
+        init();
+        ///   use to set the status bar...
+        setStatusBarColor();
+        ///   get the image url from the intent and set it on the image view...
         String imageUrl = getIntent().getStringExtra("imageUrl");
         Glide.with(this).load(imageUrl).into(image);
     }
 
+    ///   use to initialize the view...
     private void init() {
         image = findViewById(R.id.image);
-        toolbar = findViewById(R.id.toolbar);
-        profileImage = findViewById(R.id.profile_image);
-        userName = findViewById(R.id.userName);
     }
 
+    ///   use to set the status bar color...
     private void setStatusBarColor() {
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(ContextCompat.getColor(this, R.color.transparent_black));
     }
 
-//    private void setToolbar() {
-//        setSupportActionBar(toolbar);
-//        Objects.requireNonNull(getSupportActionBar()).setTitle("");
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//    }
-
-    private static String getCapitalText(String string) {
-        if (!Objects.equals(string, "") && string != null) {
-            String[] str =string.split(" ");
-            for(int i=0; i<str.length; i++) {
-                str[i] = str[i].substring(0,1).toUpperCase() + str[i].substring(1).toLowerCase();
-            }
-            return String.join(" ", str);
-        }
-        return "";
-    }
 }
