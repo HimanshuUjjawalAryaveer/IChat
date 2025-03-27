@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -39,9 +40,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public static final int MSG_TYPE_TEXT_RIGHT = 1;
     public static final int MSG_TYPE_IMAGE_LEFT = 2;
     public static final int MSG_TYPE_IMAGE_RIGHT = 3;
-    FirebaseUser user;
-    String userId;
-    public MessageAdapter(Context context, ArrayList<Chats> list, String userId) {
+    private final String userId;
+    public MessageAdapter(final Context context, final ArrayList<Chats> list, final String userId) {
         this.context = context;
         this.list = list;
         this.userId = userId;
@@ -51,6 +51,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
+        ///   this is use to set right view, left view (with image and text)...
         if(viewType == MSG_TYPE_TEXT_RIGHT) {
             view = LayoutInflater.from(context).inflate(R.layout.right_chat, parent, false);
         } else if(viewType == MSG_TYPE_TEXT_LEFT) {
@@ -66,6 +67,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
+
+
+        ///   this is used to set the reactions on the message...
         Chats chats = list.get(position);
         int[] reactions = new int[] {
                 R.drawable.reaction1,
@@ -79,13 +83,16 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 .build();
 
         ReactionPopup popup = new ReactionPopup(context, config, (pos) -> {
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Chats");
-            Map<String, Object> update = new HashMap<>();
-            update.put("feeling", pos);
-            reference.child(chats.getChatId()).updateChildren(update);
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child(context.getString(R.string.Chats));
+            Map<String, Object> updateFeelings = new HashMap<>();
+            updateFeelings.put("feeling", pos);
+            reference.child(chats.getChatId()).updateChildren(updateFeelings);
             return true; // true is closing popup, false is requesting a new selection
         });
+        ///   this is use to set the time of the message...
         holder.showTime.setText(chats.getTime());
+
+        ///   this is use to set the Feelings and text message  of the message...
         if(chats.getMessageType().equals("text")) {
             holder.showMessage.setText(chats.getMessage());
             if(chats.getFeeling() < 0) {
@@ -95,8 +102,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 holder.feeling.setBackgroundResource(reactions[chats.getFeeling()]);
             }
 
-            //  use for long touch listener...
-
+            ///  use for long touch listener...
             holder.linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -111,10 +117,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     return true;
                 }
             });
-        } else {
-            Glide.with(context).load(chats.getMessage()).into(holder.showImage);
 
-            //  set the zoom functionality of the image...
+        } else {
+            ///   use to load the image to the recycler view...
+            Glide.with(context).load(chats.getMessage()).into(holder.showImage);
+            ///   set the zoom functionality of the image...
             holder.showImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -124,25 +131,29 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     context.startActivity(intent);
                 }
             });
-
         }
+
+        ///   use to set the color of the tick...
         if(chats.getSeen()) {
-            setColor(holder.doubleTick, context.getResources().getColor(R.color.double_tick));
+            setColor(holder.doubleTick, ContextCompat.getColor(context, R.color.double_tick));
         } else {
-            setColor(holder.doubleTick, context.getResources().getColor(R.color.white));
+            setColor(holder.doubleTick, ContextCompat.getColor(context, R.color.white));
         }
     }
 
+    ///   return the size of the list...
     @Override
     public int getItemCount() {
         return list.size();
     }
 
+    ///   use to initialize the view...
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView showMessage, showTime;
-        ImageButton doubleTick, feeling;
-        ImageView showImage;
-        LinearLayout linearLayout;
+        private final TextView showMessage;
+        private final TextView showTime;
+        private final ImageButton doubleTick, feeling;
+        private final ImageView showImage;
+        private final LinearLayout linearLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             showMessage = itemView.findViewById(R.id.show_message);
@@ -154,9 +165,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         }
     }
 
+    ///   use to get the view in left or right...
     @Override
     public int getItemViewType(int position) {
-        user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
         if(list.get(position).getSender().equals(user.getUid())) {
             if(list.get(position).getMessageType().equals("text"))
                 return MSG_TYPE_TEXT_RIGHT;
@@ -169,6 +182,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 return MSG_TYPE_IMAGE_LEFT;
         }
     }
+
+    ///   use to set the color of the tick...
     private void setColor(ImageButton btn, int color) {
         btn.setBackgroundTintList(ColorStateList.valueOf(color));
     }

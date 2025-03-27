@@ -35,11 +35,11 @@ import java.util.Objects;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
-    Context context;
-    ArrayList<User> list;
-    boolean isChat;
+    private final Context context;
+    private final ArrayList<User> list;
+    private final boolean isChat;
     private String lastMessage, lastDate;
-    public UserAdapter(Context context, ArrayList<User> list, boolean isChat) {
+    public UserAdapter(final Context context, final ArrayList<User> list, final boolean isChat) {
         this.context = context;
         this.list = list;
         this.isChat = isChat;
@@ -55,11 +55,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         User user = list.get(position);
         holder.username.setText(getCapitalText(user.getUsername()));
         holder.lastTime.setText("09:00 AM");
 
         if(isChat) {
+            ///   this is used to get the last message from the particular user database...
             lastMessage(user.getUserID(), holder.lastMessage, holder.lastTime);
         } else {
             holder.lastMessage.setVisibility(View.GONE);
@@ -71,6 +73,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         } else {
             Glide.with(context).load(user.getImageUrl()).into(holder.image);
         }
+
+        ///   use to navigate to the chat message activity...
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,6 +83,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 context.startActivity(intent);
             }
         });
+
+        ///   use to show the profile image of the user when clicked on the image...
         holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,6 +112,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         TextView username, lastMessage, lastTime;
         CircleImageView image;
+
+        ///   use to initialize the view by the constructor of the class...
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             username = itemView.findViewById(R.id.username);
@@ -114,22 +122,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             lastTime = itemView.findViewById(R.id.last_time);
         }
     }
-    private static String getCapitalText(String string) {
-        if (!Objects.equals(string, "") && string != null) {
-            String[] str =string.split(" ");
-            for(int i=0; i<str.length; i++) {
-                str[i] = str[i].substring(0,1).toUpperCase() + str[i].substring(1).toLowerCase();
-            }
-            return String.join(" ", str);
-        }
-        return "";
-    }
 
+    ///   use to get the last message of the particular user from the database...
     private void lastMessage(final String userId, final TextView last_message, final TextView last_time) {
         lastMessage = "default";
         lastDate = "12/12/12";
         final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(context.getString(R.string.Chats));
         reference.addValueEventListener(new ValueEventListener() {
             @SuppressLint("SetTextI18n")
             @Override
@@ -158,6 +157,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             }
         });
     }
+
+    ///   use to get the today, yesterday and date according to the date...
     private String checkDate(String date) {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
         Date today = new Date();
@@ -171,5 +172,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         } else {
             return date;
         }
+    }
+
+    ///   use to set first letter of each word capital...
+    private static String getCapitalText(String string) {
+        if (!Objects.equals(string, "") && string != null) {
+            String[] str =string.split(" ");
+            for(int i=0; i<str.length; i++) {
+                str[i] = str[i].substring(0,1).toUpperCase() + str[i].substring(1).toLowerCase();
+            }
+            return String.join(" ", str);
+        }
+        return "";
     }
 }

@@ -66,7 +66,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatMessageActivity extends AppCompatActivity {
 
-    private final static int PICK_IMAGES = 3;
     private Toolbar toolbar;
     private CircleImageView image, userProfile;
     private ImageView sendingImage;
@@ -82,7 +81,7 @@ public class ChatMessageActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private final String[] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
     private static final int REQUEST_CODE = 3;
-    private LinearLayout call, callAnswer, callDecline;
+    private LinearLayout call, callAnswer;
     private ConstraintLayout imageBlock;
     private Uri imageUri;
     private ActivityResultLauncher<Intent> galleryLauncher;
@@ -150,7 +149,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         call = findViewById(R.id.call);
         callAnswer = findViewById(R.id.call_answer);
-        callDecline = findViewById(R.id.call_decline);
+//        callDecline = findViewById(R.id.call_decline);
         sendingImage = findViewById(R.id.sending_image);
         imageBlock = findViewById(R.id.image_block);
         cancelButton = findViewById(R.id.cancel_button);
@@ -477,7 +476,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
+    
     ///  this is mainly use to capitalize the first letter of the string...
     private static String getCapitalText(String string) {
         if (!Objects.equals(string, "") && string != null) {
