@@ -140,7 +140,7 @@ public class ProfileActivity extends AppCompatActivity {
         userId = intent.getStringExtra("userID");
         if(userId != null) {
            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(userId);
-           reference.addListenerForSingleValueEvent(new ValueEventListener() {
+           reference.addValueEventListener(new ValueEventListener() {
                @Override
                public void onDataChange(@NonNull DataSnapshot snapshot) {
                    User user = snapshot.getValue(User.class);

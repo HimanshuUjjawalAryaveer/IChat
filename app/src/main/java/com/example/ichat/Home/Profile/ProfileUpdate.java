@@ -1,6 +1,6 @@
 package com.example.ichat.Home.Profile;
 
-import android.app.ProgressDialog;
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,8 +11,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
@@ -21,6 +22,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
+import com.example.ichat.CustomDialog.CustomProgressDialog;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -44,11 +46,8 @@ public class ProfileUpdate extends AppCompatActivity {
     private CircleImageView profileImage;
     private EditText username, email;
     private AppCompatButton updateButton;
-    private Intent intent;
-    private String UID;
-    private static final int PICK_IMAGES = 100;
     private Uri imageUri;
-    private FirebaseStorage storage;
+    private ActivityResultLauncher<Intent> galleryLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,46 +59,37 @@ public class ProfileUpdate extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        ///   use to set the status bar color...
         setStatusBarColor();
+        ///   use to initialize the view...
         init();
+        ///   use to set the name of the action bar...
         Objects.requireNonNull(getSupportActionBar()).setTitle("Update Profile");
-        setData(UID);
-
-        //  set to come back to the profile activity
-        updateButton.setOnClickListener(v -> {
-            uploadImageToFirebase(imageUri);
-        });
-
-        //  use to set the image to the profile
+        ///   use to fetch the data at very first time...
+        setData(getIntent().getStringExtra("userId"));
+        ///   use to save the data to the firebase and come back to the profile activity...
+        updateButton.setOnClickListener(v -> uploadImageToFirebase(imageUri, getIntent().getStringExtra("userId")));
+        ///   use to get the image from the gallery and set it to the image view...
         profileImage.setOnClickListener(v -> openGallery());
     }
 
-    private void updateDataToTheFirebase(String imageUrl) {
-        String name = username.getText().toString().toLowerCase().trim();
-        if(name.isEmpty()) {
-            Toast.makeText(this, "Please enter the Username", Toast.LENGTH_LONG).show();
-        } else {
-            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user));
-            if(imageUrl != null) {
-                reference.child(UID).child("username").setValue(name);
-                reference.child(UID).child("imageUrl").setValue(imageUrl);
-            } else {
-                reference.child(UID).child("username").setValue(name);
-            }
-            finish();
-        }
-    }
-
+    ///   use to initialize the view...
     private void init() {
         profileImage = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
         email = findViewById(R.id.emil);
         updateButton = findViewById(R.id.update_button);
 
-        UID = getIntent().getStringExtra("userId");
-
-        storage = FirebaseStorage.getInstance();
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if(result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                imageUri = result.getData().getData();
+                profileImage.setImageURI(imageUri);
+            }
+        });
     }
+
+    ///   use to fetch the data from the firebase at first time...
     private void setData(String UID) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user));
         reference.child(UID).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -120,58 +110,41 @@ public class ProfileUpdate extends AppCompatActivity {
             }
         });
     }
-    private void setStatusBarColor() {
-        Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
-    }
 
+    ///   use to get the image from gallery and also get the image uri of the image...
     private void openGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(gallery, PICK_IMAGES);
+        galleryLauncher.launch(gallery);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGES && resultCode == RESULT_OK && data != null) {
-            imageUri = data.getData();
-            profileImage.setImageURI(imageUri);
-        }
-    }
-
-    private void uploadImageToFirebase(Uri imageUri) {
+    ///   use to upload the image to the firebase storage...
+    private void uploadImageToFirebase(Uri imageUri, final String UID) {
         if (imageUri != null) {
-            // Initialize progress dialog
-            final ProgressDialog pd = new ProgressDialog(this, R.style.customColorOfProgressDialog);
-            pd.setTitle("Updating profile");
-            pd.show();
+            final CustomProgressDialog dialog = new CustomProgressDialog(this);
+            dialog.setTitle("Updating profile");
+            dialog.setCancelable(false);
+            dialog.show();
 
-            // Create unique file reference
-            StorageReference storeRef = storage.getReference().child("images/" + System.currentTimeMillis() + ".jpg");
-
-            // Upload file to Firebase Storage
+            ///   Create unique file reference in the firebase database...
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference storeRef = storage.getReference().child("ProfileImages/" + System.currentTimeMillis() + ".jpg");
+            ///   Upload file to Firebase Storage...
             storeRef.putFile(imageUri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Get the download URL after successful upload
+                            ///   Get the download URL after successful upload...
                             storeRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
-                                    // Get the URL as a string
-                                    String imageUrl = uri.toString();
-                                    pd.dismiss();
-
-                                    // create the profile using email and password...
-
-                                    updateDataToTheFirebase(imageUrl);
-
+                                    dialog.dismiss();
+                                    ///   here the uri contains the url of the image...
+                                    updateDataToTheFirebase(uri.toString(), UID);
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    pd.dismiss();
+                                    dialog.dismiss();
                                     Toast.makeText(ProfileUpdate.this, "Failed to get URL: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                                 }
                             });
@@ -180,21 +153,45 @@ public class ProfileUpdate extends AppCompatActivity {
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            pd.dismiss();
+                            dialog.dismiss();
                             Toast.makeText(ProfileUpdate.this, "Upload failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                            // Update progress dialog
+                            ///   Update progress dialog...
                             double percent = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
-                            pd.setMessage("Progress: " + (int) percent + "%");
+                            dialog.setMessage("Progress: " + (int) percent + "%");
                         }
                     });
         }
         else {
-            updateDataToTheFirebase(null);
+            updateDataToTheFirebase(null, UID);
         }
+    }
+
+    ///   use to upload the getting data to the firebase database...
+    private void updateDataToTheFirebase(String imageUrl, final String UID) {
+        String name = username.getText().toString().toLowerCase().trim();
+        if(name.isEmpty()) {
+            Toast.makeText(this, "Please enter the Username", Toast.LENGTH_LONG).show();
+        } else {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user));
+            if(imageUrl != null) {
+                reference.child(UID).child("username").setValue(name);
+                reference.child(UID).child("imageUrl").setValue(imageUrl);
+            } else {
+                reference.child(UID).child("username").setValue(name);
+            }
+            finish();
+        }
+    }
+
+    ///   use to set the color of the status bar...
+    private void setStatusBarColor() {
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.light_blue));
     }
 }
