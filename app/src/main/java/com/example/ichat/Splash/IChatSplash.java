@@ -23,6 +23,7 @@ public class IChatSplash extends AppCompatActivity {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();   /* checks if the user is logged in or not */
         Intent intent;
 
+        ///   check that the current user is login or not...
         if(firebaseUser != null) {
             intent = new Intent(IChatSplash.this, HomeActivity.class);
         } else {
