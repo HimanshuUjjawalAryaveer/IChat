@@ -106,7 +106,7 @@ public class ChatMessageActivity extends AppCompatActivity {
         setRecyclerView(getApplicationContext());
         ///  this is use to load the data from the database...
         loadData();
-        //   check it is video call or not...
+        ///  check it is video call or not...
         checkVideoCall();
 
         ///  use to send the text message...
@@ -405,7 +405,7 @@ public class ChatMessageActivity extends AppCompatActivity {
             }
         } else {
             if(isPermissionGranted()) {
-                Toast.makeText(ChatMessageActivity.this, "set status", Toast.LENGTH_LONG).show();
+                Toast.makeText(ChatMessageActivity.this, "call send...", Toast.LENGTH_LONG).show();
                 setVideoCallStatus();   //  set status for video call...
             } else {
                 askPermission();
@@ -447,20 +447,30 @@ public class ChatMessageActivity extends AppCompatActivity {
 
     ///  use to set the video call status in the firebase database...
     private void setVideoCallStatus() {
-        if(uID != null) {
-            DatabaseReference reference1 = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(uID);
-            Map<String, Object> setVideoCallStatus = new HashMap<>();
-            setVideoCallStatus.put("videoCallStatus", true);
-            reference1.updateChildren(setVideoCallStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    Intent intent = new Intent(ChatMessageActivity.this, IChatVideoCallConnectingActivity.class);
-                    intent.putExtra("userID", uID);
-                    startActivity(intent);
-                    finish();
-                }
-            });
-        }
+        Intent intent = new Intent(ChatMessageActivity.this, IChatVideoCallConnectingActivity.class);
+        intent.putExtra("userID", uID);
+        startActivity(intent);
+        finish();
+//        if(uID != null) {
+//            DatabaseReference referenceReceiver = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(uID);
+//            DatabaseReference referenceSender = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+//            Map<String, Object> setVideoCallStatus = new HashMap<>();
+//            setVideoCallStatus.put("videoCallStatus", true);
+//            referenceSender.updateChildren(setVideoCallStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                @Override
+//                public void onComplete(@NonNull Task<Void> task) {
+//                    referenceReceiver.updateChildren(setVideoCallStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            Intent intent = new Intent(ChatMessageActivity.this, IChatVideoCallConnectingActivity.class);
+//                            intent.putExtra("userID", uID);
+//                            startActivity(intent);
+//                            finish();
+//                        }
+//                    });
+//                }
+//            });
+//        }
     }
 
     ///  this is use to set the color and other functionality of the status bar...
