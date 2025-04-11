@@ -29,12 +29,9 @@ public class IChatSplash extends AppCompatActivity {
         } else {
             intent = new Intent(IChatSplash.this, CreateAccountActivity.class);
         }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(intent);
-                finishAffinity();
-            }
+        new Handler().postDelayed(() -> {
+            startActivity(intent);
+            finishAffinity();
         }, 3000);
     }
 

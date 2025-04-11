@@ -81,7 +81,6 @@ public class UsersFragment extends Fragment {
         recyclerView = view.findViewById(R.id.user_recycler_view);
         editText = view.findViewById(R.id.search_user);
 
-
         list = new ArrayList<>();
         dialog = new CustomProgressDialog(getContext());
     }

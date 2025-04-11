@@ -29,20 +29,23 @@ public class CreateAccountActivity extends AppCompatActivity {
             return insets;
         });
 
-
-        hideActionBar();   // hides the action bar using this fn...
-        init();            //  initializes the buttons
-
+        ///   this is use to hide the action bar...
+        hideActionBar();
+        ///   this is use to initialize the value...
+        init();
+        ///   this is use to navigate to the CreateAccountActivity...
         createAccount.setOnClickListener(view -> startActivity(new Intent(CreateAccountActivity.this, IChatSignUpNewActivity.class)));
+        ///   this is use to navigate to the SignInActivity...
         login.setOnClickListener(view -> startActivity(new Intent(CreateAccountActivity.this, IChatSignInNewActivity.class)));
-
     }
-
-    private void hideActionBar() {
-        Objects.requireNonNull(getSupportActionBar()).hide();
-    }
+    ///   this is use to initialize the value...
     private void init() {
         createAccount = findViewById(R.id.createAccount);
         login = findViewById(R.id.login);
+    }
+
+    ///   this is use to hide the action bar...
+    private void hideActionBar() {
+        Objects.requireNonNull(getSupportActionBar()).hide();
     }
 }

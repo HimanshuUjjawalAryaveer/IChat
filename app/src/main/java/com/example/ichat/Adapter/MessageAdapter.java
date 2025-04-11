@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -103,33 +102,24 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             }
 
             ///  use for long touch listener...
-            holder.linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    holder.linearLayout.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            popup.onTouch(v, event);
-                            holder.linearLayout.setOnTouchListener(null);
-                            return false;
-                        }
-                    });
-                    return true;
-                }
+            holder.linearLayout.setOnLongClickListener(v -> {
+                holder.linearLayout.setOnTouchListener((v1, event) -> {
+                    popup.onTouch(v1, event);
+                    holder.linearLayout.setOnTouchListener(null);
+                    return false;
+                });
+                return true;
             });
 
         } else {
             ///   use to load the image to the recycler view...
             Glide.with(context).load(chats.getMessage()).into(holder.showImage);
             ///   set the zoom functionality of the image...
-            holder.showImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, IChatImageShowActivity.class);
-                    intent.putExtra("imageUrl", chats.getMessage());
-                    intent.putExtra("userId", userId);
-                    context.startActivity(intent);
-                }
+            holder.showImage.setOnClickListener(v -> {
+                Intent intent = new Intent(context, IChatImageShowActivity.class);
+                intent.putExtra("imageUrl", chats.getMessage());
+                intent.putExtra("userId", userId);
+                context.startActivity(intent);
             });
         }
 

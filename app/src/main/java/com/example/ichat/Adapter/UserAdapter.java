@@ -75,31 +75,25 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         }
 
         ///   use to navigate to the chat message activity...
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, ChatMessageActivity.class);
-                intent.putExtra("userId", user.getUserID());
-                context.startActivity(intent);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, ChatMessageActivity.class);
+            intent.putExtra("userId", user.getUserID());
+            context.startActivity(intent);
         });
 
         ///   use to show the profile image of the user when clicked on the image...
-        holder.image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dialog dialog = new Dialog(context);
-                dialog.setContentView(R.layout.image_show_block);
-                ImageView imageView = dialog.findViewById(R.id.show_image);
-                TextView textView = dialog.findViewById(R.id.userName);
-                textView.setText(getCapitalText(user.getUsername()));
-                if(user.getImageUrl() == null) {
-                    imageView.setBackgroundResource(R.drawable.user_profile);
-                } else {
-                    Glide.with(context).load(user.getImageUrl()).into(imageView);
-                }
-                dialog.show();
+        holder.image.setOnClickListener(v -> {
+            Dialog dialog = new Dialog(context);
+            dialog.setContentView(R.layout.image_show_block);
+            ImageView imageView = dialog.findViewById(R.id.show_image);
+            TextView textView = dialog.findViewById(R.id.userName);
+            textView.setText(getCapitalText(user.getUsername()));
+            if(user.getImageUrl() == null) {
+                imageView.setBackgroundResource(R.drawable.user_profile);
+            } else {
+                Glide.with(context).load(user.getImageUrl()).into(imageView);
             }
+            dialog.show();
         });
     }
 

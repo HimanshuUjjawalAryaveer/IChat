@@ -29,13 +29,9 @@ import androidx.credentials.exceptions.GetCredentialException;
 import com.example.ichat.CustomDialog.CustomProgressDialog;
 import com.example.ichat.Home.HomeActivity.HomeActivity;
 import com.example.ichat.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
@@ -63,24 +59,32 @@ public class IChatSignInNewActivity extends AppCompatActivity {
             return insets;
         });
 
-        //   use to hide the action bar...
+        ///   this is use to hide the action bar...
         Objects.requireNonNull(getSupportActionBar()).hide();
-        //   use to initialize the view...
+        ///   this is use to initialize the view...
         init();
-
-        //   use to show and hide the password according to the user...
+        ///   this is use to show and hide the password according to the user...
         userPassword.setOnTouchListener((v, event) -> showAndHidePassword(event, userPassword));
-
-        //   sign in using the login button...
+        ///   this is use to sign in using the login button using email and password...
         loginButton.setOnClickListener(v -> signInUsingEmailAndPassword());
-
-        //   sign in using the google...
+        ///   this is use to sign in using the google...
         googleLoginButton.setOnClickListener(v -> signInWithGoogle());
     }
 
+    ///   this is use for the initialization of the view...
+    private void init() {
+        userPassword = findViewById(R.id.user_password);
+        userEmail = findViewById(R.id.user_email);
+        loginButton = findViewById(R.id.login_btn);
+        googleLoginButton = findViewById(R.id.google_login_btn);
+
+        mAuth = FirebaseAuth.getInstance();
+    }
+
+    ///   this is use to sign in using the google...
     private void signInWithGoogle() {
 
-        //   use for the google authentication...
+        ///   this is use for the google authentication...
         GetGoogleIdOption googleIdOption = new GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(true)
                 .setServerClientId(getString(R.string.default_web_client_id))
@@ -110,6 +114,7 @@ public class IChatSignInNewActivity extends AppCompatActivity {
         });
     }
 
+    ///   this use for the perform the next task for google sign in...
     public void handleSignIn(Credential credential) {
         if(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType()) && credential instanceof CustomCredential) {
             Bundle credentialData = credential.getData();
@@ -120,6 +125,7 @@ public class IChatSignInNewActivity extends AppCompatActivity {
         }
     }
 
+    ///   this is use for the firebase authentication using google...
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
@@ -135,17 +141,7 @@ public class IChatSignInNewActivity extends AppCompatActivity {
                 });
     }
 
-    //   uas for the initialization of the view...
-    private void init() {
-        userPassword = findViewById(R.id.user_password);
-        userEmail = findViewById(R.id.user_email);
-        loginButton = findViewById(R.id.login_btn);
-        googleLoginButton = findViewById(R.id.google_login_btn);
-
-        mAuth = FirebaseAuth.getInstance();
-    }
-
-    //   sign using the email and password...
+    ///   this is use to signIn using the email and password...
     private void signInUsingEmailAndPassword() {
         dialog = new CustomProgressDialog(IChatSignInNewActivity.this);
         dialog.setTitle("Logging in...");
@@ -159,28 +155,22 @@ public class IChatSignInNewActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.fill_detail), Toast.LENGTH_LONG).show();
         } else {
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()) {
-                                // redirect to the home activity...
-                                dialog.dismiss();
-                                startActivity(new Intent(IChatSignInNewActivity.this, HomeActivity.class));
-                                finishAffinity();
-                            }
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
+                    .addOnCompleteListener(task -> {
+                        if(task.isSuccessful()) {
+                            // redirect to the home activity...
                             dialog.dismiss();
-                            // else show the error
-                            Toast.makeText(IChatSignInNewActivity.this, "sign in failed", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(IChatSignInNewActivity.this, HomeActivity.class));
+                            finishAffinity();
                         }
+                    }).addOnFailureListener(e -> {
+                        dialog.dismiss();
+                        // else show the error
+                        Toast.makeText(IChatSignInNewActivity.this, "sign in failed", Toast.LENGTH_LONG).show();
                     });
         }
     }
 
-    //   use for the show and hide the password...
+    ///   this is use for the show and hide the password...
     private boolean showAndHidePassword(@NonNull MotionEvent event, EditText editText) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (event.getRawX() >= (editText.getRight() - editText.getCompoundDrawables()[2].getBounds().width())) {

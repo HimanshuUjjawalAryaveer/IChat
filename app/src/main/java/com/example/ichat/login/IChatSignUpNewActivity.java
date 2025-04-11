@@ -9,7 +9,6 @@ import android.os.CancellationSignal;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -33,22 +32,15 @@ import com.example.ichat.CustomDialog.CustomProgressDialog;
 import com.example.ichat.Home.HomeActivity.HomeActivity;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.Objects;
 import java.util.concurrent.Executors;
@@ -79,36 +71,52 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
             return insets;
         });
 
-        // use to hide the action bar
+        ///   this is use to hide the action bar...
         Objects.requireNonNull(getSupportActionBar()).hide();
-        // use to initialize view & view group...
+        ///   this is use to initialize view & view group...
         init();
-
-        //   here this listener is used to show and hide the password...
+        ///   this is used to show and hide the password...
         userPassword.setOnTouchListener((v, event) -> showAndHidePassword(event, userPassword));
-
-        // code for the google sign-in button..
+        ///   this is use for the google sign-in button..
         findViewById(R.id.google_signin_btn).setOnClickListener(view -> signInWithGoogle());
-
-        // use to create the account using email and password...
-        findViewById(R.id.create_account_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String name = username.getText().toString().trim();
-                String email = userEmail.getText().toString().trim();
-                String password = userPassword.getText().toString().trim();
-                if(name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                    Toast.makeText(IChatSignUpNewActivity.this, getString(R.string.fill_detail), Toast.LENGTH_LONG).show();
-                } else {
-                    createUserUsingEmailAndPassword(name, email, password);     // sign up with email and password;
-                }
+        ///   this is use to create the account using email and password...
+        findViewById(R.id.create_account_btn).setOnClickListener(v -> {
+            String name = username.getText().toString().trim();
+            String email = userEmail.getText().toString().trim();
+            String password = userPassword.getText().toString().trim();
+            if(name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(IChatSignUpNewActivity.this, getString(R.string.fill_detail), Toast.LENGTH_LONG).show();
+            } else {
+                createUserUsingEmailAndPassword(name, email, password);     // sign up with email and password;
             }
         });
-
-        // use to open the gallery and pick the image...
+        ///   this is use to open the gallery and pick the image...
         userProfileImage.setOnClickListener(v -> openGallery());
     }
 
+    ///   this is use to initialize the views and the viewGroup...
+    private void init() {
+
+        username = findViewById(R.id.user_name);
+        userEmail = findViewById(R.id.user_email);
+        userPassword = findViewById(R.id.user_password);
+        userProfileImage = findViewById(R.id.user_profile_image);
+
+        isPasswordVisible = false;
+
+        mAuth = FirebaseAuth.getInstance();
+        storage = FirebaseStorage.getInstance();
+        database = FirebaseDatabase.getInstance();
+
+        galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if(result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                imageUri = result.getData().getData();
+                userProfileImage.setImageURI(imageUri);
+            }
+        });
+    }
+
+    ///   this is use for the google authentication...
     private void signInWithGoogle() {
 
         //   use for the google authentication...
@@ -135,7 +143,7 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
             }
         });
     }
-
+    ///   this is used for the next task of the google sign in...
     public void handleSignIn(Credential credential) {
         if(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL.equals(credential.getType()) && credential instanceof CustomCredential) {
             Bundle credentialData = credential.getData();
@@ -145,6 +153,7 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
             Toast.makeText(this, "google-sign-in-failed", Toast.LENGTH_LONG).show();
         }
     }
+    ///   this is use to firebase authentication using google...
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
@@ -165,35 +174,13 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
                 });
     }
 
-    // use to initialize the some important values...
-    private void init() {
-
-        username = findViewById(R.id.user_name);
-        userEmail = findViewById(R.id.user_email);
-        userPassword = findViewById(R.id.user_password);
-        userProfileImage = findViewById(R.id.user_profile_image);     //  from here initialize the view...
-
-        isPasswordVisible = false;    //   use for the password field...
-
-        mAuth = FirebaseAuth.getInstance();
-        storage = FirebaseStorage.getInstance();
-        database = FirebaseDatabase.getInstance();     //   use for the realtime database...
-
-
-        galleryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            if(result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
-                imageUri = result.getData().getData();
-                userProfileImage.setImageURI(imageUri);
-            }
-        });
-    }
-
-    // use to picking the image from the gallery...
+    ///   this is use to picking the image from the gallery...
     private void openGallery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryLauncher.launch(gallery);
     }
 
+    ///   this is use to create the account using email and password...
     private void createUserUsingEmailAndPassword(String name, String email, String password) {
         // first upload the image to the firebase storage...
         if(imageUri != null) {
@@ -204,6 +191,7 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
         }
     }
 
+    ///   this is use to create the profile using email and password and upload the data to the firebase realtime database...
     private void createProfileUsingEmailAndPassword(String name, String email, String password, String imageUrl) {
         dialog = new CustomProgressDialog(IChatSignUpNewActivity.this);
         dialog.setTitle("Logging In...");
@@ -211,47 +199,36 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
         dialog.setCancelable(false);
         dialog.show();
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()) {
-                            // upload the data on realtime firebase database...
-                            uploadDataToTheRealtimeDatabase(name.toLowerCase(), email, password, imageUrl, mAuth.getUid());
-                        }
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        // upload the data on realtime firebase database...
+                        uploadDataToTheRealtimeDatabase(name.toLowerCase(), email, password, imageUrl, mAuth.getUid());
                     }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(IChatSignUpNewActivity.this, "sign up failed...", Toast.LENGTH_LONG).show();
-                        dialog.dismiss();
-                    }
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(IChatSignUpNewActivity.this, "sign up failed...", Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
                 });
     }
 
-    // use to upload the details to the firebase realtime database...
+    ///   this use to upload the details to the firebase realtime database...
     private void uploadDataToTheRealtimeDatabase(String name, String email, String password, String imageUrl, String uid) {
         User user = new User(name, email, password, uid, imageUrl, "Your Address", "Hey there, I am using IChat.", "graduation", "offline", false);
         database.getReference(getString(R.string.User)).child(uid).setValue(user)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()) {
-                            Toast.makeText(IChatSignUpNewActivity.this, "data uploaded", Toast.LENGTH_LONG).show();
-                            dialog.dismiss();
-                            // redirect to the home activity...
-                            startActivity(new Intent(IChatSignUpNewActivity.this, HomeActivity.class));
-                            finishAffinity();
-                        }
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(IChatSignUpNewActivity.this, "failed to upload data", Toast.LENGTH_LONG).show();
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()) {
+                        Toast.makeText(IChatSignUpNewActivity.this, "data uploaded", Toast.LENGTH_LONG).show();
                         dialog.dismiss();
+                        // redirect to the home activity...
+                        startActivity(new Intent(IChatSignUpNewActivity.this, HomeActivity.class));
+                        finishAffinity();
                     }
+                }).addOnFailureListener(e -> {
+                    Toast.makeText(IChatSignUpNewActivity.this, "failed to upload data", Toast.LENGTH_LONG).show();
+                    dialog.dismiss();
                 });
     }
 
+    ///   this is use to upload the image to the firebase storage...
     private void uploadImageToFirebase(String name, String email, String password, Uri imageUri) {
         // Initialize progress dialog
         dialog = new CustomProgressDialog(IChatSignUpNewActivity.this);
@@ -264,47 +241,32 @@ public class IChatSignUpNewActivity extends AppCompatActivity {
 
         // Upload file to Firebase Storage
         storeRef.putFile(imageUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Get the download URL after successful upload
-                        storeRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                // Get the URL as a string
-                                String imageUrl = uri.toString();
-                                dialog.dismiss();
-
-                                // create the profile using email and password...
-                                createProfileUsingEmailAndPassword(name, email, password, imageUrl);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                dialog.dismiss();
-                                Toast.makeText(IChatSignUpNewActivity.this, "Failed to get URL: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
+                .addOnSuccessListener(taskSnapshot -> {
+                    // Get the download URL after successful upload
+                    storeRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // Get the URL as a string
+                        String imageUrl = uri.toString();
                         dialog.dismiss();
-                        Toast.makeText(IChatSignUpNewActivity.this, "Upload failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                    }
+
+                        // create the profile using email and password...
+                        createProfileUsingEmailAndPassword(name, email, password, imageUrl);
+                    }).addOnFailureListener(e -> {
+                        dialog.dismiss();
+                        Toast.makeText(IChatSignUpNewActivity.this, "Failed to get URL: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                    });
                 })
-                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                        // Update progress dialog
-                        double percent = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
-                        dialog.setMessage("Progress: " + (int) percent + "%");
-                    }
+                .addOnFailureListener(e -> {
+                    dialog.dismiss();
+                    Toast.makeText(IChatSignUpNewActivity.this, "Upload failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                })
+                .addOnProgressListener(snapshot -> {
+                    // Update progress dialog
+                    double percent = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                    dialog.setMessage("Progress: " + (int) percent + "%");
                 });
     }
 
-    // use to handle the view and un-view options to the edittext view...
+    ///   use to show and hide the password...
     private boolean showAndHidePassword(@NonNull MotionEvent event, EditText editText) {
         if (event.getAction() == MotionEvent.ACTION_UP) {
             if (event.getRawX() >= (editText.getRight() - editText.getCompoundDrawables()[2].getBounds().width())) {

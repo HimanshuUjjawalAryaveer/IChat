@@ -1,7 +1,6 @@
 package com.example.ichat.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -33,7 +32,6 @@ import java.util.Collections;
 public class ChatFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private Intent intent;
     private DatabaseReference reference;
     private CustomProgressDialog dialog;
     private boolean isFlag = true;
