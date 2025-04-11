@@ -3,17 +3,17 @@ package com.example.ichat.Model;
 import java.util.ArrayList;
 
 public class User {
-    private ArrayList<StatusData> statusData;
+    private ArrayList<StatusData> userStatus;
     public String getAddress() {
         return address;
     }
 
-    public ArrayList<StatusData> getStatusData() {
-        return statusData;
+    public ArrayList<StatusData> getUserStatus() {
+        return userStatus;
     }
 
-    public void setStatusData(ArrayList<StatusData> statusData) {
-        this.statusData = statusData;
+    public void setUserStatus(ArrayList<StatusData> userStatus) {
+        this.userStatus = userStatus;
     }
 
     public void setAddress(String address) {
@@ -106,6 +106,19 @@ public class User {
         this.imageUrl = imageUrl;
         this.status = status;
         this.videoCallStatus = videoCallStatus;
+    }
+    public User(String username, String email, String password, String userID, String imageUrl, String address, String about, String education, String status, boolean videoCallStatus, ArrayList<StatusData> userStatus) {
+        this.address = address;
+        this.about = about;
+        this.education = education;
+        this.password = password;
+        this.email = email;
+        this.username = username;
+        this.userID = userID;
+        this.imageUrl = imageUrl;
+        this.status = status;
+        this.videoCallStatus = videoCallStatus;
+        this.userStatus = userStatus;
     }
 
     private String imageUrl;
