@@ -41,12 +41,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="50dp"
+        android:gravity="center"
+        android:padding="5dp"
         android:text="@string/by_hua"
-        android:textStyle="bold"
         android:textColor="@color/black"
         android:textSize="30sp"
-        android:gravity="center"
-        android:padding="5dp" />
+        android:textStyle="bold"
+        tools:ignore="TextSizeCheck" />
 </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

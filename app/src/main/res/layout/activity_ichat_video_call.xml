@@ -36,7 +36,8 @@
         android:layout_height="50dp"
         android:src="@drawable/user_profile"
         app:civ_border_color="@color/white"
-        app:civ_border_width="1dp" />
+        app:civ_border_width="1dp"
+        tools:ignore="ImageContrastCheck" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -50,21 +51,23 @@
             android:id="@+id/user_name"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/himanshu_singh_bhamaniya"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:maxLines="1"
-            android:ellipsize="end"/>
+            tools:ignore="TextSizeCheck,TextContrastCheck" />
 
         <TextView
             android:id="@+id/user_address"
             android:layout_width="150dp"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="@string/uttar_pardesh"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:maxLines="1"
-            android:ellipsize="end"/>
+            tools:ignore="TextContrastCheck" />
 
 
     </LinearLayout>

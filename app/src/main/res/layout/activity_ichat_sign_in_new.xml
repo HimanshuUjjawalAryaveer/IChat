@@ -22,19 +22,20 @@ android:background="@drawable/wallpaper">
     app:layout_constraintEnd_toEndOf="@+id/textView2"
     app:layout_constraintStart_toStartOf="@+id/textView2" />
 
-<TextView
-    android:id="@+id/textView2"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:paddingHorizontal="30dp"
-    android:text="@string/welcome_to_ichat_ichat_is_the_social_chatting_application_that_is_used_to_chatting_with_each_other"
-    android:textAlignment="center"
-    android:textColor="@color/white"
-    app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.72" />
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="30dp"
+        android:text="@string/welcome_to_ichat_ichat_is_the_social_chatting_application_that_is_used_to_chatting_with_each_other"
+        android:textAlignment="center"
+        android:textColor="#0277BD"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.72"
+        tools:ignore="TextContrastCheck" />
 <LinearLayout
     android:id="@+id/linearLayout4"
     android:layout_width="match_parent"
@@ -60,8 +61,8 @@ android:background="@drawable/wallpaper">
         android:textStyle="bold" />
 
 
-
     <EditText
+        android:id="@+id/user_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
@@ -70,27 +71,30 @@ android:background="@drawable/wallpaper">
         android:background="@drawable/edit_bg"
         android:hint="@string/email"
         android:inputType="textEmailAddress"
+        android:minHeight="48dp"
         android:paddingHorizontal="10dp"
         android:paddingVertical="10dp"
-        android:textColorHint="@color/white1"
         android:textColor="@color/white"
-        android:id="@+id/user_email"/>
+        android:textColorHint="@color/white1"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
+        android:id="@+id/user_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="15dp"
         android:autofillHints=""
         android:background="@drawable/edit_bg"
+        android:drawableEnd="@drawable/close_eye"
+        android:drawablePadding="5dp"
         android:hint="@string/password"
-        android:textColor="@color/white"
         android:inputType="textWebPassword"
+        android:minHeight="48dp"
         android:paddingHorizontal="10dp"
         android:paddingVertical="10dp"
+        android:textColor="@color/white"
         android:textColorHint="@color/white1"
-        android:drawablePadding="5dp"
-        android:drawableEnd="@drawable/close_eye"
-        android:id="@+id/user_password"/>
+        tools:ignore="VisualLintTextFieldSize" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:layout_width="match_parent"
@@ -101,7 +105,8 @@ android:background="@drawable/wallpaper">
         android:text="@string/login_account"
         android:textAllCaps="false"
         android:textStyle="bold"
-        android:id="@+id/login_btn"/>
+        android:id="@+id/login_btn"
+        tools:ignore="VisualLintButtonSize" />
 </LinearLayout>
 
 

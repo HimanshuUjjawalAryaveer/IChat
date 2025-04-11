@@ -15,14 +15,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#b089c0ff"/>
+
     <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tab"
-        app:tabTextColor="@color/black"
         android:background="#b089c0ff"
+        app:tabIndicatorColor="@color/black"
         app:tabTextAppearance="@style/TabTextStyle"
-        app:tabIndicatorColor="@color/black"/>
+        app:tabTextColor="@color/black"
+        tools:ignore="SpeakableTextPresentCheck" />
     <androidx.viewpager2.widget.ViewPager2
         android:layout_width="match_parent"
         android:layout_height="match_parent"

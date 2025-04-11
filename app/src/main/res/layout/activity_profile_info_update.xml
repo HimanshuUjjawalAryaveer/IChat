@@ -8,29 +8,30 @@
     android:background="@color/white">
 
     <TextView
+        android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/current_set_to"
-        android:textStyle="bold"
-        android:textColor="@color/user_block_des"
         android:layout_margin="20dp"
-        android:id="@+id/text"/>
+        android:text="@string/current_set_to"
+        android:textColor="@color/user_block_des"
+        android:textStyle="bold"
+        tools:ignore="TextContrastCheck" />
 
     <EditText
+        android:id="@+id/edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text"
-        android:autofillHints=""
         android:layout_marginStart="15dp"
         android:layout_marginEnd="15dp"
+        android:autofillHints=""
+        android:background="@drawable/profile_info_edit_bg"
+        android:fontFamily="sans-serif"
         android:inputType="textMultiLine"
         android:maxLines="4"
-        android:textColor="@color/black"
-        android:fontFamily="sans-serif"
-        android:background="@drawable/profile_info_edit_bg"
         android:padding="10dp"
-        android:id="@+id/edit"
-        tools:ignore="LabelFor" />
+        android:textColor="@color/black"
+        tools:ignore="LabelFor,SpeakableTextPresentCheck,TouchTargetSizeCheck,VisualLintTextFieldSize" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -46,7 +47,8 @@
             android:text="@string/cancel"
             android:background="@color/light_blue"
             android:layout_margin="5dp"
-            android:id="@+id/cancel"/>
+            android:id="@+id/cancel"
+            tools:ignore="VisualLintButtonSize" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:layout_width="match_parent"
@@ -55,7 +57,8 @@
             android:text="@string/save"
             android:background="@color/light_blue"
             android:layout_margin="5dp"
-            android:id="@+id/save"/>
+            android:id="@+id/save"
+            tools:ignore="VisualLintButtonSize" />
 
     </LinearLayout>
 

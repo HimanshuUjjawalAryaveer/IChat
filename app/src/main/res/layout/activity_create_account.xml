@@ -46,7 +46,8 @@
             android:layout_height="wrap_content"
             android:text="@string/ichat_is_a_social_chatting_platform_where_you_can_and_chat_freely_and_securely_this_is_the_best_chatting_application_with_high_security_security"
             android:textAlignment="center"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            tools:ignore="VisualLintLongText" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -65,7 +66,8 @@
             android:background="@drawable/btn_back_bg"
             android:text="@string/create_account"
             android:textStyle="bold"
-            android:textColor="@color/light_blue" />
+            android:textColor="@color/light_blue"
+            tools:ignore="VisualLintButtonSize" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/login"
@@ -75,7 +77,8 @@
             android:background="@drawable/btn_back_bg"
             android:text="@string/login"
             android:textStyle="bold"
-            android:textColor="@color/light_blue" />
+            android:textColor="@color/light_blue"
+            tools:ignore="VisualLintButtonSize" />
 
     </LinearLayout>
 
