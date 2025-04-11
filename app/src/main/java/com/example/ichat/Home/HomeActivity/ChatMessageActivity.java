@@ -35,15 +35,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.ichat.Adapter.MessageAdapter;
-import com.example.ichat.Home.Call.IChatVideoCallConnectingActivity;
+import com.example.ichat.Home.Call.IChatCallReceiveActivity;
+import com.example.ichat.Home.Call.IChatCallStartActivity;
 import com.example.ichat.Home.Profile.ProfileActivity;
 import com.example.ichat.Model.Chats;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -53,7 +50,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -67,9 +63,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ChatMessageActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private CircleImageView image, userProfile;
+    private CircleImageView image, userProfile, incomingCallImage;
     private ImageView sendingImage;
-    private TextView username, status;
+    private TextView username, status, incomingCallUsername, incomingCallStatus;
     private EditText message;
     private ImageButton messageSendBtn, cancelButton, sendButton;
     private RecyclerView recyclerView;
@@ -81,7 +77,8 @@ public class ChatMessageActivity extends AppCompatActivity {
     private ValueEventListener valueEventListener;
     private final String[] permissions = new String[] {Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
     private static final int REQUEST_CODE = 3;
-    private LinearLayout call, callAnswer;
+    private LinearLayout call, callAnswer, callDecline;
+    private User callUser;
     private ConstraintLayout imageBlock;
     private Uri imageUri;
     private ActivityResultLauncher<Intent> galleryLauncher;
@@ -118,17 +115,15 @@ public class ChatMessageActivity extends AppCompatActivity {
                 message.setText("");
             });
         ///  use to answer the call...
-        callAnswer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isPermissionGranted()) {
-                    setVideoCallStatus();
-                } else {
-                    askPermission();
-                }
+        callAnswer.setOnClickListener((View v) -> {
+            if(isPermissionGranted()) {
+                startVideoCallByReceiverSide();
+            } else {
+                askPermission();
             }
         });
-
+        ///  use to decline the call...
+        callDecline.setOnClickListener(v -> callEndButtonFunctionality());
         ///  use to send the photo message...
         message.setOnTouchListener((v, event) -> setClickOnTheCamera(event, message));
         ///  to set the cancel button functionality...
@@ -149,7 +144,10 @@ public class ChatMessageActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view);
         call = findViewById(R.id.call);
         callAnswer = findViewById(R.id.call_answer);
-//        callDecline = findViewById(R.id.call_decline);
+        callDecline = findViewById(R.id.call_decline);
+        incomingCallImage = findViewById(R.id.incoming_call_img);
+        incomingCallUsername = findViewById(R.id.incoming_call_username);
+        incomingCallStatus = findViewById(R.id.incoming_call_status);
         sendingImage = findViewById(R.id.sending_image);
         imageBlock = findViewById(R.id.image_block);
         cancelButton = findViewById(R.id.cancel_button);
@@ -163,17 +161,36 @@ public class ChatMessageActivity extends AppCompatActivity {
                 readyToSendImage(imageUri);
             }
         });
+
+        ///  this is use to get the data of the another user in advance...
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(getString(R.string.User)).child(Objects.requireNonNull(getIntent().getStringExtra("userId")));
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                callUser = snapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     ///  use to show the status popup of the video call...
     private void checkVideoCall() {
         reference = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
         reference.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 User user1 = snapshot.getValue(User.class);
                 assert user1 != null;
                 if(user1.isVideoCallStatus()) {
+                    Glide.with(getApplicationContext()).load(callUser.getImageUrl()).into(incomingCallImage);
+                    String name = getCapitalText(callUser.getUsername());
+                    incomingCallUsername.setText(name);
+                    incomingCallStatus.setText("incoming call from " + name);
                     call.setVisibility(View.VISIBLE);
                 } else {
                     call.setVisibility(View.GONE);
@@ -356,33 +373,17 @@ public class ChatMessageActivity extends AppCompatActivity {
         StorageReference storeRef = storage.getReference("ChatImage").child("images/" + sender + System.currentTimeMillis() + ".jpg");
         // Upload file to Firebase Storage
         storeRef.putFile(imageUri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Get the download URL after successful upload
-                        storeRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                // Get the URL as a string
-                                String imageUrl = uri.toString();
+                .addOnSuccessListener(taskSnapshot -> {
+                    // Get the download URL after successful upload
+                    storeRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        // Get the URL as a string
+                        String imageUrl = uri.toString();
 
-                                sendMessage(sender, receiver, imageUrl, time, date, "image");
+                        sendMessage(sender, receiver, imageUrl, time, date, "image");
 
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(ChatMessageActivity.this, "Failed to get URL: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    }
+                    }).addOnFailureListener(e -> Toast.makeText(ChatMessageActivity.this, "Failed to get URL: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(ChatMessageActivity.this, "Upload failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(ChatMessageActivity.this, "Upload failed: " + e.getLocalizedMessage(), Toast.LENGTH_LONG).show());
     }
 
 
@@ -406,12 +407,34 @@ public class ChatMessageActivity extends AppCompatActivity {
         } else {
             if(isPermissionGranted()) {
                 Toast.makeText(ChatMessageActivity.this, "call send...", Toast.LENGTH_LONG).show();
-                setVideoCallStatus();   //  set status for video call...
+                startVideoCallBySenderSide();
             } else {
                 askPermission();
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    ///   this is use to start the video call by the sender side...
+    private void startVideoCallBySenderSide() {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("VideoCallStartStatus").child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.getValue() != null) {
+                    databaseReference.setValue(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        Intent intent = new Intent(ChatMessageActivity.this, IChatCallStartActivity.class);
+        intent.putExtra("userID", uID);
+        startActivity(intent);
+        finish();
     }
 
     ///  this is use when the user resume the app...
@@ -446,31 +469,11 @@ public class ChatMessageActivity extends AppCompatActivity {
     }
 
     ///  use to set the video call status in the firebase database...
-    private void setVideoCallStatus() {
-        Intent intent = new Intent(ChatMessageActivity.this, IChatVideoCallConnectingActivity.class);
+    private void startVideoCallByReceiverSide() {
+        Intent intent = new Intent(ChatMessageActivity.this, IChatCallReceiveActivity.class);
         intent.putExtra("userID", uID);
         startActivity(intent);
         finish();
-//        if(uID != null) {
-//            DatabaseReference referenceReceiver = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(uID);
-//            DatabaseReference referenceSender = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
-//            Map<String, Object> setVideoCallStatus = new HashMap<>();
-//            setVideoCallStatus.put("videoCallStatus", true);
-//            referenceSender.updateChildren(setVideoCallStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                @Override
-//                public void onComplete(@NonNull Task<Void> task) {
-//                    referenceReceiver.updateChildren(setVideoCallStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                        @Override
-//                        public void onComplete(@NonNull Task<Void> task) {
-//                            Intent intent = new Intent(ChatMessageActivity.this, IChatVideoCallConnectingActivity.class);
-//                            intent.putExtra("userID", uID);
-//                            startActivity(intent);
-//                            finish();
-//                        }
-//                    });
-//                }
-//            });
-//        }
     }
 
     ///  this is use to set the color and other functionality of the status bar...
@@ -522,4 +525,15 @@ public class ChatMessageActivity extends AppCompatActivity {
         updateChild.put("status", status);
         reference.updateChildren(updateChild);
     }
+
+    ///  this is use to call end...
+    private void callEndButtonFunctionality() {
+        DatabaseReference referenceUser = FirebaseDatabase.getInstance().getReference(getString(R.string.User));
+        referenceUser.child(Objects.requireNonNull(getIntent().getStringExtra("userId"))).child("videoCallStatus").setValue(false).addOnCompleteListener(task -> referenceUser.child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid()).child("videoCallStatus").setValue(false).addOnCompleteListener(task1 -> {
+            call.setVisibility(View.GONE);
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+            databaseReference.child("VideoCallStartStatus").child(Objects.requireNonNull(getIntent().getStringExtra("userId"))).setValue(null);
+        }));
+    }
+
 }

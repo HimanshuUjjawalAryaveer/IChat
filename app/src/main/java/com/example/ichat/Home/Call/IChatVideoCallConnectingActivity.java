@@ -3,7 +3,6 @@ package com.example.ichat.Home.Call;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,8 +58,6 @@ public class IChatVideoCallConnectingActivity extends AppCompatActivity {
         setUserProfile(getIntent().getStringExtra("userID"));
         ///   this is use to check the video call status...
         checkVideoCallStatus();
-        ///   this is use to set the video call status...
-        setVideoCallStatus();
         callEndButton.setOnClickListener(v -> callEnd());                                           //  use to the instruction after the call end...
     }
 
@@ -93,7 +90,9 @@ public class IChatVideoCallConnectingActivity extends AppCompatActivity {
 
     ///   this function is use to check the video call status...
     private void checkVideoCallStatus() {
+        ///   this is the receiver reference...
         DatabaseReference referenceReceiver = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(Objects.requireNonNull(getIntent().getStringExtra("userID")));
+        ///   this is the sender reference...
         DatabaseReference referenceSender = FirebaseDatabase.getInstance().getReference(getString(R.string.user)).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
         referenceReceiver.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -111,25 +110,28 @@ public class IChatVideoCallConnectingActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         Toast.makeText(IChatVideoCallConnectingActivity.this, "Ringing...", Toast.LENGTH_SHORT).show();
-                                       /// playRingTone();
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                Toast.makeText(IChatVideoCallConnectingActivity.this, "Not answering...", Toast.LENGTH_LONG).show();
-                                                setVideoCallStatus.put("videoCallStatus", false);
-                                                referenceReceiver.updateChildren(setVideoCallStatus).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
-                                                        referenceSender.updateChildren(setVideoCallStatus).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                            @Override
-                                                            public void onSuccess(Void unused) {
-                                                                finish();
-                                                            }
-                                                        });
-                                                    }
-                                                });
-                                            }
-                                        }, 30000);
+                                        /// playRingTone();
+
+                                        ///   this is use to set the video call status...
+                                        setVideoCallStatus();
+//                                        new Handler().postDelayed(new Runnable() {
+//                                            @Override
+//                                            public void run() {
+//                                                Toast.makeText(IChatVideoCallConnectingActivity.this, "Not answering...", Toast.LENGTH_LONG).show();
+//                                                setVideoCallStatus.put("videoCallStatus", false);
+//                                                referenceReceiver.updateChildren(setVideoCallStatus).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                    @Override
+//                                                    public void onSuccess(Void unused) {
+//                                                        referenceSender.updateChildren(setVideoCallStatus).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                            @Override
+//                                                            public void onSuccess(Void unused) {
+//                                                                finish();
+//                                                            }
+//                                                        });
+//                                                    }
+//                                                });
+//                                            }
+//                                        }, 30000);
                                     }
                                 });
                             } else {

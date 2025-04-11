@@ -54,9 +54,9 @@
     <string name="please_login_to_continue">please login to continue…</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="himanshu_singh_bhamaniya">Himanshu Singh Bhamaniya</string>
-    <string name="uttar_pardesh">Uttar Pardesh</string>
+    <string name="uttar_pardesh">Uttar Pradesh</string>
     <string name="answer">Answer</string>
     <string name="decline">Decline</string>
     <string name="filePath">file:android_asset/call.html</string>
-    <string name="add_a_caption">Add a caption...</string>
+    <string name="add_a_caption">Add a caption…</string>
 </resources>
