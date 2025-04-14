@@ -1,4 +1,4 @@
-package com.example.ichat.Fragments.Status;
+package com.example.ichat.Status;
 
 import android.net.Uri;
 import android.os.Bundle;

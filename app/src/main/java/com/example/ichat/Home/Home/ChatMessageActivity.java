@@ -1,4 +1,4 @@
-package com.example.ichat.Home.HomeActivity;
+package com.example.ichat.Home.Home;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -311,6 +311,8 @@ public class ChatMessageActivity extends AppCompatActivity {
         userChat.put("date", date);
         userChat.put("timestamp", System.currentTimeMillis());
         userChat.put("feeling", -1);
+//        userChat.put("senderDelete", false);
+//        userChat.put("receiverDelete", false);
         assert uniqueId != null;
         chatReference.child(uniqueId).setValue(userChat);
 

@@ -21,7 +21,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.ichat.CustomDialog.CustomProgressDialog;
-import com.example.ichat.Home.HomeActivity.HomeActivity;
+import com.example.ichat.Home.Home.HomeActivity;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;
 import com.google.firebase.auth.FirebaseAuth;

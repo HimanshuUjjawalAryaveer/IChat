@@ -7,7 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.ichat.Fragments.UsersFragment;
 import com.example.ichat.Fragments.ChatFragment;
-import com.example.ichat.Fragments.Status.StatusFragment;
+import com.example.ichat.Status.StatusFragment;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package com.example.ichat.Home.HomeActivity;
+package com.example.ichat.Home.Home;
 
 import android.os.Bundle;
 import android.view.Window;

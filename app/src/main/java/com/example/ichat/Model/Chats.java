@@ -7,6 +7,44 @@ public class Chats {
     private int feeling;
     private String chatId;
 
+    public Chats(String receiver, String sender, String message, int feeling, boolean senderDelete, String chatId, boolean receiverDelete, String messageType, long timestamp, String date, String time, boolean seen) {
+        this.receiver = receiver;
+        this.sender = sender;
+        this.message = message;
+        this.feeling = feeling;
+        this.senderDelete = senderDelete;
+        this.chatId = chatId;
+        this.receiverDelete = receiverDelete;
+        this.messageType = messageType;
+        this.timestamp = timestamp;
+        this.date = date;
+        this.time = time;
+        this.seen = seen;
+    }
+
+    public boolean isSenderDelete() {
+        return senderDelete;
+    }
+
+    public void setSenderDelete(boolean senderDelete) {
+        this.senderDelete = senderDelete;
+    }
+
+    public boolean isReceiverDelete() {
+        return receiverDelete;
+    }
+
+    public void setReceiverDelete(boolean receiverDelete) {
+        this.receiverDelete = receiverDelete;
+    }
+
+    public boolean isSeen() {
+        return seen;
+    }
+
+    private boolean senderDelete;
+    private boolean receiverDelete;
+
     public String getChatId() {
         return chatId;
     }

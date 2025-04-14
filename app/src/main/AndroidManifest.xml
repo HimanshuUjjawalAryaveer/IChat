@@ -23,17 +23,20 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Status.IChatShowStatusActivity"
+            android:exported="false" />
+        <activity
             android:name=".Home.Call.IChatCallReceiveActivity"
             android:exported="false" />
         <activity
             android:name=".Home.Call.IChatCallStartActivity"
             android:exported="false" />
         <activity
-            android:name=".Fragments.Status.IChatStatusImageActivity"
+            android:name=".Status.IChatStatusImageActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".Home.HomeActivity.IChatImageShowActivity"
+            android:name=".Home.Home.IChatImageShowActivity"
             android:exported="false"
             android:theme="@style/IChatCustomToolbarForImageZoom" />
         <activity
@@ -59,7 +62,7 @@
             android:name=".Home.Profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".Home.HomeActivity.ChatMessageActivity"
+            android:name=".Home.Home.ChatMessageActivity"
             android:exported="false"
             android:theme="@style/IChatCustomToolbarForMessageChat"
             android:windowSoftInputMode="adjustResize" />
@@ -76,7 +79,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Home.HomeActivity.HomeActivity"
+            android:name=".Home.Home.HomeActivity"
             android:exported="false" />
     </application>
 

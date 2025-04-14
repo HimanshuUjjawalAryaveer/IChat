@@ -22,7 +22,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
-import com.example.ichat.Home.HomeActivity.ChatMessageActivity;
+import com.example.ichat.Home.Home.ChatMessageActivity;
 import com.example.ichat.Model.InterfaceJava;
 import com.example.ichat.Model.User;
 import com.example.ichat.R;

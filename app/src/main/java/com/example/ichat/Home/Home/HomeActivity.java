@@ -1,4 +1,4 @@
-package com.example.ichat.Home.HomeActivity;
+package com.example.ichat.Home.Home;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +17,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.example.ichat.Adapter.HomePageAdapter;
 import com.example.ichat.Home.Profile.ProfileActivity;
 import com.example.ichat.R;
+import com.example.ichat.Remover.StatusRemover;
 import com.example.ichat.login.CreateAccountActivity;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -50,12 +51,20 @@ public class HomeActivity extends AppCompatActivity {
         init();
         ///   set the tab layout to the home fragment...
         setTabLayout();
+        ///   use to remove the status automatically after 24 hours...
+        removeStatusAuto();
     }
 
     ///   use to initialize the view...
     private void init() {
         tabLayout = findViewById(R.id.tab);
         viewPager = findViewById(R.id.viewPager);
+    }
+
+    ///   this is use to remove the status automatically after 24 hours...
+    private void removeStatusAuto() {
+        StatusRemover st = new StatusRemover(this);
+        st.cleanStatusData();
     }
 
     ///   use to set and show the menu bar...

@@ -1,4 +1,4 @@
-package com.example.ichat.Fragments.Status;
+package com.example.ichat.Status;
 
 import android.app.Activity;
 import android.content.Context;

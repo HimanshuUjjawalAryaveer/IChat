@@ -67,13 +67,13 @@ dependencies {
 
     //  use for the circular status view...
     implementation ("com.github.3llomi:CircularStatusView:V1.0.3")
+    //  use for the showing status...
+    implementation ("com.github.OMARIHAMZA:StoryView:1.0.2-alpha")
 
 
 //        // Also add the dependencies for the Credential Manager libraries and specify their versions
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-
-
 
 }

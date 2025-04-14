@@ -17,7 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.ichat.Home.HomeActivity.IChatImageShowActivity;
+import com.example.ichat.Home.Home.IChatImageShowActivity;
 import com.example.ichat.Model.Chats;
 import com.example.ichat.R;
 import com.github.pgreze.reactions.ReactionPopup;
